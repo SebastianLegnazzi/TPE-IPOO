@@ -107,19 +107,30 @@ class Viaje{
     }
 
     /**
-     * Este modulo asigna los valores a los atributos cuando se crea una instancia de la clase 
-     * @param array $pasajeros
-     * @param int $cantidadMax
-     * @param string $destino
-     * @param int $codigoViaje
+     * Este modulo cambia datos del array Pasajeros
+     * @param int $documento
+     * @param string $index
+     * @param string $dato
+     * @return array
     */
     public function cambiarDatoPasajero($documento,$index,$dato){
         $arrayPasajero = $this->getPasajero();
-        if ($arrayPasajero["documento"] == $documento){
-            $arrayPasajero[$index] = $dato;
-        }
+        $i = 0;
+        $dimension = count($arrayPasajero);
+        do{
+            $encontro = false;
+            if($arrayPasajero[$i]["documento"] == $documento){
+                $encontro = true;
+            }else{
+            $i++;
+            }
+        }while($encontro && $i <= $dimension);
+        $arrayPasajero[$i][$index] = $dato;
+        $this->setPasajeros($arrayPasajero);
     }
 
+    
+    
 
 
 }
