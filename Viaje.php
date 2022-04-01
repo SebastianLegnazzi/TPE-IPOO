@@ -105,7 +105,22 @@ class Viaje{
         $this->destino = $destino;
         $this->codigoViaje = $codigoViaje;
     }
-    
+
+    /**
+     * Este modulo asigna los valores a los atributos cuando se crea una instancia de la clase 
+     * @param array $pasajeros
+     * @param int $cantidadMax
+     * @param string $destino
+     * @param int $codigoViaje
+    */
+    public function cambiarDatoPasajero($documento,$index,$dato){
+        $arrayPasajero = $this->getPasajero();
+        if ($arrayPasajero["documento"] == $documento){
+            $arrayPasajero[$index] = $dato;
+        }
+    }
+
+
 
 }
 
