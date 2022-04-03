@@ -127,18 +127,9 @@ class Viaje{
      * @param array $nuevoPasajero
     */
     public function agregarPasajero($nuevoPasajero){
-        if(in_array($nuevoPasajero, $this->getPasajeros())){
-            echo "El pasajero ya esta ingresado en el vuelo!"."\n";
-        }else{
-            if($this->getCantidadMax() < count($this->getPasajeros())){
-                $arrayPasajeros = $this->getPasajeros();
-                array_push($arrayPasajero, $nuevoPasajero);
-                $this->setPasajeros($arrayPasajeros);
-                echo "El pasajero se agrego al viaje correctamente!"."\n";
-            }else{
-                echo "El pasajero no se pudo agregar ya que el vuelo esta lleno!"."\n";
-            }
-        }
+        $arrayPasajeros = $this->getPasajeros();
+        array_push($arrayPasajeros, $nuevoPasajero);
+        $this->setPasajeros($arrayPasajeros);
     }
 
     /**
@@ -148,10 +139,10 @@ class Viaje{
     */
     public function quitarPasajero($documento){
         $arrayPasajeros = $this->getPasajeros();
-        $i = 0;
         $dimension = count($arrayPasajeros);
         $indice = $this->buscarPasajero($documento);
         unset($arrayPasajeros[$indice]);
+        sort($arrayPasajeros);
         $this->setPasajeros($arrayPasajeros);
         }
 
@@ -161,7 +152,7 @@ class Viaje{
     */
     public function superaCapacidad(){
         $capacidad = count($this->getPasajeros());
-        $verificacion = ($capacidad > $this->getCantidadMax()) ? true : false;
+        $verificacion = ($capacidad < $this->getCantidadMax()) ? true : false;
         return $verificacion;
     }
 
@@ -173,9 +164,9 @@ class Viaje{
         $dimension = count($arrayPasajeros);
         for($i = 0; $i < $dimension; $i++){
             echo ("La ubicacion del pasajero es: ".($i+1)."\n".
-                "El Nombre es: ".($this->getPasajeros())[$i]["nombre"]."\n".
-                "El Apellido es: ".($this->getPasajeros())[$i]["apellido"]."\n".
-                "El DNI es: ".($this->getPasajeros())[$i]["documento"]."\n"."\n");
+                "El Nombre es: ".$arrayPasajeros[$i]["nombre"]."\n".
+                "El Apellido es: ".$arrayPasajeros[$i]["apellido"]."\n".
+                "El DNI es: ".$arrayPasajeros[$i]["documento"]."\n"."\n");
         }
     }
 
@@ -193,9 +184,9 @@ class Viaje{
     public function verUnPasajero($documento){
         $index = $this->buscarPasajero($documento);
         echo ("La ubicacion del pasajero es: ".($index+1)."\n".
-            "El Nombre es: ".($this->getPasajeros())[$i]["nombre"]."\n".
-            "El Apellido es: ".($this->getPasajeros())[$i]["apellido"]."\n".
-            "El DNI es: ".($this->getPasajeros())[$i]["documento"]."\n"."\n");
+            "El Nombre es: ".($this->getPasajeros())[$index]["nombre"]."\n".
+            "El Apellido es: ".($this->getPasajeros())[$index]["apellido"]."\n".
+            "El DNI es: ".($this->getPasajeros())[$index]["documento"]."\n"."\n");
     }
 
     /**
@@ -223,7 +214,7 @@ class Viaje{
      * Este modulo devuelve una cadena de caracteres mostrando el contenido de los atributos
      * @return string
     */
-    public function __toStrign(){
+    public function __toString(){
         return ("Los pasajeros del viaje son: ".count($this->getPasajeros())."\n".
                 "La capacidad maxima del viaje es: ".$this->getCantidadMax()."\n".
                 "El destino del viaje es: ".$this->getDestino()."\n".
