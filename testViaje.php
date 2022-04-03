@@ -21,7 +21,7 @@ function menu()
     echo "6) Agregar un pasajero al viaje."."\n";
     echo "7) Eliminar un pasajero del viaje."."\n";
     echo "8) Ver datos de un pasajero"."\n";
-    echo ") Salir"."\n";
+    echo "9) Salir"."\n";
     echo "Opcion: ";
     $menu = trim(fgets(STDIN));
     echo "\n";
@@ -37,12 +37,13 @@ function personasViaje($cantidad)
 {
     $arrayPersonas = [];
     for($i = 0; $i < $cantidad; $i++){
-        echo "ingrese el nombre del pasajero";
+        echo "ingrese el nombre del pasajero ".($i+1).": ";
         $nombrePasajero =  trim(fgets(STDIN));
-        echo "ingrese el apellido del pasajero";
+        echo "ingrese el apellido del pasajero ".($i+1).": ";
         $apellidoPasajero =  trim(fgets(STDIN));
-        echo "ingrese el DNI del pasajero";
+        echo "ingrese el DNI del pasajero".($i+1).": ";
         $dniPasajero =  trim(fgets(STDIN));
+        echo "\n";
         $arrayPersonas[$i] = ["nombre"=> $nombrePasajero,"apellido"=> $apellidoPasajero,"dni"=>$dniPasajero];
     }
     return $arrayPersonas;
@@ -73,46 +74,92 @@ switch ($opcion) { //Según lo visto en clase, switch es una instrucción de est
         $personas = personasViaje($cantPersonas);
         $objViaje = new Viaje($personas,$cantMax,$destViaje,$codigoViaje);
         echo "El viaje se ha creado correctamente!"."\n";
-        $menu = seleccionarOpcion();
+        $opcion = menu();
         break;
 
 
     case 2: 
-
-        $menu = seleccionarOpcion();
+        echo "la cantidad de pasajeros del viaje ".$objViaje->getDestino()." es: ".$objViaje->cantidadPasajeros()."\n";
+        $opcion = menu();
         break;
 
 
     case 3: 
-
-        $menu = seleccionarOpcion();
+        echo "Las personas del viaje ".$objViaje->getDestino()." son: "."\n";
+        $objViaje->verPasajeros();
+        $opcion = menu();
         break;
 
         
     case 4: 
-
-        $menu = seleccionarOpcion();
+        echo "Los datos del viaje ".$objViaje->getDestino()." son: "."\n";
+        echo $objViaje."\n";
+        $opcion = menu();
         break;
        
         
     case 5: 
-
-        $menu = seleccionarOpcion();
+        "Ingrese el DNI de que pasajero desea cambiar el dato: ";
+        $dni = trim(fgets(STDIN));
+        "Ingrese que dato desea cambiar (nombre/apellido/DNI): ";
+        $tipoDatoCambiar = strtolower(trim(fgets(STDIN)));
+        "Ingrese el nuevo dato: ";
+        $nuevoValor = trim(fgets(STDIN));
+        $objViaje->cambiarDatoPasajero($dni,$datoACambiar,$nuevoValor);
+        echo "El dato se ha modificado correctamente!"."\n";
+        $opcion = menu();
         break;
         
 
     case 6: 
-
-        $menu = seleccionarOpcion();
+        $superaCapacidad = $objViaje->superaCapacidad();
+        if($superaCapacidad){
+            echo "ingrese el nombre del nuevo pasajero: ";
+            $nombrePasajero = trim(fgets(STDIN));
+            echo "Ingrese el apellido del nuevo pasajero: ";
+            $apellidoPasajero = trim(fgets(STDIN));
+            echo "Ingrese el DNI del nuevo pasajero: ";
+            $dniPasajero = trim(fgets(STDIN));
+            $pasajero = ["nombre"=> $nombrePasajero,"apellido"=> $apellidoPasajero,"dni"=>$dniPasajero];
+            $objViaje->agregarPasajero($pasajero);
+            echo "El pasajero se agrego correctamente al viaje!"."\n";
+        }else{
+            echo "El vuelo ya esta lleno!"."\n";
+        }
+        $opcion = menu();
         break;
         
 
+    case 7: 
+        echo "ingrese el DNI del pasajero que desea eliminar: ";
+        $dni = trim(fgets(STDIN));
+        if($objViaje->existePasajero($dni)){
+            $objViaje->quitarPasajero($dni);
+            echo "El pasajero se elimino correctamente!"."\n";
+        }else{
+            echo "El DNI no coincide con ningun pasajero del vuelo"."\n";
+        }
+        $opcion = menu();
+        break;
+        
+
+    case 8: 
+        echo "ingrese el DNI del pasajero que desea eliminar: ";
+        $dni = trim(fgets(STDIN));
+        if($objViaje->existePasajero($dni)){
+            echo "Los datos datos del pasajero ".$dni." son:"."\n";
+            $objViaje->verUnPasajero($dni);
+        }
+        $opcion = menu();
+        break;
+
+
     default: 
-        echo "El número que ingresó no es válido, por favor ingrese un número del 1 al 7"."\n"."\n";
-        $menu = seleccionarOpcion();
-    break;
+        echo "El número que ingresó no es válido, por favor ingrese un número del 1 al 9"."\n"."\n";
+        $opcion = menu();
+        break;
     }
-} while ($menu < 7 || $menu > 7);
+} while ($opcion < 9 || $opcion > 9);
 exit();
 
 

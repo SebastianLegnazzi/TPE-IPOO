@@ -180,14 +180,43 @@ class Viaje{
     }
 
     /**
+     * Este modulo devuelve la cantidad de pasajeros que hay en el viaje
+    */
+    public function cantidadPasajeros(){
+        $cantidad = count($this->getPasajeros());
+        return $cantidad;
+    }
+
+    /**
      * Este modulo devuelve todos los pasajeros del viaje por pantalla
     */
-    public function verUnPasajero($dni){
-        $index = $this->buscarPasajero($dni);
+    public function verUnPasajero($documento){
+        $index = $this->buscarPasajero($documento);
         echo ("La ubicacion del pasajero es: ".($index+1)."\n".
             "El Nombre es: ".($this->getPasajeros())[$i]["nombre"]."\n".
             "El Apellido es: ".($this->getPasajeros())[$i]["apellido"]."\n".
             "El DNI es: ".($this->getPasajeros())[$i]["documento"]."\n"."\n");
+    }
+
+    /**
+     * Este modulo busca si existe el pasajero y devuelve true o false
+     * @return boolean
+    */
+    public function existePasajero($dni){
+        $arrayPasajeros = $this->getPasajeros();
+        $i = 0;
+        $dimension = count($arrayPasajeros);
+        $existe = false;
+        $seguirBuscando = true;
+        do{
+            if($arrayPasajeros[$i]["documento"] == $dni){
+                $seguirBuscando = false;
+                $existe = true;
+            }else{
+            $i++;
+            }
+        }while($seguirBuscando && ($i < $dimension));
+        return ($existe);
     }
 
     /**
@@ -213,18 +242,18 @@ class Viaje{
         $arrayPasajeros = $this->getPasajeros();
         $i = 0;
         $dimension = count($arrayPasajeros);
-        do{
-            $seguirBuscando = true;
-            if($arrayPasajeros[$i]["documento"] == $documentoPasajero){
-                $seguirBuscando = false;
-            }else{
-            $i++;
-            }
-        }while($seguirBuscando && ($i < $dimension));
+        if($this->existePasajero($dni)){
+            do{
+                $seguirBuscando = true;
+                if($arrayPasajeros[$i]["documento"] == $dni){
+                    $seguirBuscando = false;
+                }else{
+                $i++;
+                }
+            }while($seguirBuscando && ($i < $dimension));
+        }
         return ($i);
     }
-
-
 
 }
 
