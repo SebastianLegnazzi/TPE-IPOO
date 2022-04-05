@@ -4,9 +4,8 @@ class Viaje{
     private $destino;
     private $cantidadMax;
     private $pasajeros;
-    
-    
 
+    
     /**************************************/
     /**************** SET *****************/
     /**************************************/
