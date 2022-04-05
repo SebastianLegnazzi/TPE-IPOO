@@ -25,6 +25,7 @@ function menu()
     echo "11) Modificar otro viaje."."\n";
     echo "12) Crear otro viaje."."\n";
     echo "13) Elimina un viaje."."\n";
+    echo "14) Ver todos los viajes."."\n";
     echo "0) Salir"."\n";
     echo "Opcion: ";
     $menu = trim(fgets(STDIN));
@@ -34,7 +35,8 @@ function menu()
 
 
 /**
- * Inicia el programa y pide que ingrese los viajes
+ * Inicia el programa y pide que ingrese los viajes que luego devuelve al programa principal
+ * @return array
  */
 function inicioPrograma()
 {
@@ -44,7 +46,6 @@ function inicioPrograma()
     $cantViajes = trim(fgets(STDIN));
     $cantViajes = verificadorInt($cantViajes);
     $objViajes = creaViajes($cantViajes);
-    separador();
     return $objViajes;
 }
 
@@ -75,13 +76,14 @@ function creaViajes($cant)
             echo "La cantidad de personas supera a la cantidad maxima del viaje!"."\n";
         }
     }
-        return $objViajes;
-        separador();
+    return $objViajes;  
 }
 
 
 /**
- * Inicia el programa y pide que ingrese los viajes
+ * Busca el index del viaje con el que va a realizar las operaciones
+ * @param array $viajes
+ * @return int
  */
 function viajeModificar($viajes)
 {
@@ -104,43 +106,45 @@ function viajeModificar($viajes)
 
 
 /**
- * Inicia el programa y pide que ingrese los viajes
+ * Devuelve true si el viaje existe, false en caso contrario
+ * @param array $arrayViajes
+ * @param string $codigoViaje
+ * @return boolean
  */
 function existeViaje($arrayViajes, $codigoViaje)
 {
-    separador();
     $dimension = count($arrayViajes);
     $buscarCodigo = true;
     $i = 0;
     while($buscarCodigo && ($i < $dimension)){
-        if($arrayViajes[$i]->getCodigoViaje() == $codigoViaje){
+        if(strtolower($arrayViajes[$i]->getCodigoViaje()) == strtolower($codigoViaje)){
             $buscarCodigo = false;
         }else{
             $i++;
         }
     }
-    separador();
     return $buscarCodigo;
 }
 
 
 /**
- * Inicia el programa y pide que ingrese los viajes
+ * Devuelve en que posicion del $arrayViajes se encuentra el codigo ingresado
+ * @param array $arrayViajes
+ * @param string $codigoViaje
+ * @return int
  */
 function buscarViaje($arrayViajes, $codigoViaje)
 {
-    separador();
     $dimension = count($arrayViajes);
     $buscarCodigo = true;
     $i = 0;
     while($buscarCodigo && ($i < $dimension)){
-        if($arrayViajes[$i]->getCodigoViaje() == $codigoViaje){
+        if(strtolower($arrayViajes[$i]->getCodigoViaje()) == strtolower($codigoViaje)){
             $buscarCodigo = false;
         }else{
             $i++;
         }
     }
-    separador();
     return $i;
 }
 
@@ -166,6 +170,22 @@ function personasViaje($cantidad)
         $arrayPersonas[$i] = ["nombre"=> $nombrePasajero,"apellido"=> $apellidoPasajero,"documento"=>$dniPasajero];
     }
     return $arrayPersonas;
+}
+
+
+/**
+ * Retorna un array con todos los pasajeros del viaje
+ * @param array $viajes
+ */
+function mostrarViajes($viajes)
+{
+    $dimension = count($viajes);
+    for($i = 0; $i < $dimension; $i++){
+        separador();
+        echo "Viaje: ".($i+1)."\n";
+        echo $viajes[$i];
+        separador();
+    }
 }
 
 /**
@@ -201,7 +221,7 @@ $objViaje = inicioPrograma();
 $indexViaje = viajeModificar($objViaje);
 $opcion = menu();
 do {
-switch ($opcion) { //Según lo visto en clase, switch es una instrucción de estructura de control alternativa, ya que, es similar a la instrucción IF
+switch ($opcion) {
     
     case 1: 
         separador();
@@ -357,9 +377,10 @@ switch ($opcion) { //Según lo visto en clase, switch es una instrucción de est
         separador();
         echo "Ingrese la cantidad de viajes que desea agregar: ";
         $cant = trim(fgets(STDIN));
-        separador();
+        $cant = verificadorInt($cant);
         $nuevosViajes = creaViajes($cant);
         $objViaje = array_merge($objViaje, $nuevosViajes);
+        separador();
         $opcion = menu();
         break;
 
@@ -368,9 +389,23 @@ switch ($opcion) { //Según lo visto en clase, switch es una instrucción de est
         separador();
         echo "Ingrese el codigo del viaje que desea eliminar: ";
         $codigo = trim(fgets(STDIN));
-        $index = existeViaje($objViaje, $codigo);
-        unset($objViaje[$index]);
-        sort($objViaje);
+        $existe = existeViaje($objViaje, $codigo);
+        if(!$existe){
+            $index = buscarViaje($objViaje, $codigo);
+            unset($objViaje[$index]);
+            sort($objViaje);
+        }else{
+            echo "el codigo ingresado no coicide con ningun viaje!"."\n";
+        }
+        separador();
+        $opcion = menu();
+        break;
+
+
+    case 14: 
+        separador();
+        echo "Los viajes creados son: "."\n";
+        mostrarViajes($objViaje);
         $opcion = menu();
         break;
 
