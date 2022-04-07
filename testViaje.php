@@ -210,6 +210,35 @@ function verificadorInt($dato)
     return $dato;
 }
 
+/**
+ * Este modulo devuelve todos los pasajeros del viaje por pantalla
+*/
+function verPasajeros($viajes){
+    $arrayPasajeros = $viajes->getPasajeros();
+    $dimension = count($arrayPasajeros);
+    for($i = 0; $i < $dimension; $i++){
+        datoPasajero($viajes, $i);
+    }
+}
+
+/**
+ * Este modulo devuelve todos los pasajeros del viaje por pantalla
+*/
+function verUnPasajero($viajes, $documento){
+    $posicion = $viajes->buscarPasajero($documento);
+    datoPasajero($viajes, $posicion);
+}
+
+
+/**
+ * Este modulo devuelve todos los pasajeros del viaje por pantalla
+*/
+function datoPasajero($arrayViaje, $index){
+    echo ("La ubicacion del pasajero es: ".($index+1)."\n".
+        "El Nombre es: ".($arrayViaje->getPasajeros())[$index]["nombre"]."\n".
+        "El Apellido es: ".($arrayViaje->getPasajeros())[$index]["apellido"]."\n".
+        "El DNI es: ".($arrayViaje->getPasajeros())[$index]["documento"]."\n"."\n");
+}
 
 /**************************************/
 /********* PROGRAMA PRINCIPAL *********/
@@ -234,7 +263,7 @@ switch ($opcion) {
     case 2: 
         separador();
         echo "Las personas del viaje ".$objViaje[$indexViaje]->getDestino()." son: "."\n";
-        $objViaje[$indexViaje]->verPasajeros();
+        verPasajeros($objViaje[$indexViaje]);
         separador();
         $opcion = menu();
         break;
@@ -323,7 +352,7 @@ switch ($opcion) {
         $dni = trim(fgets(STDIN));
         if($objViaje[$indexViaje]->existePasajero($dni)){
             echo "Los datos datos del pasajero ".$dni." son:"."\n";
-            $objViaje[$indexViaje]->verUnPasajero($dni);
+            verUnPasajero($objViaje[$indexViaje],$dni);
         }
         separador();
         $opcion = menu();

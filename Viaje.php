@@ -155,19 +155,6 @@ class Viaje{
         return $verificacion;
     }
 
-    /**
-     * Este modulo devuelve todos los pasajeros del viaje por pantalla
-    */
-    public function verPasajeros(){
-        $arrayPasajeros = $this->getPasajeros();
-        $dimension = count($arrayPasajeros);
-        for($i = 0; $i < $dimension; $i++){
-            echo ("La ubicacion del pasajero es: ".($i+1)."\n".
-                "El Nombre es: ".$arrayPasajeros[$i]["nombre"]."\n".
-                "El Apellido es: ".$arrayPasajeros[$i]["apellido"]."\n".
-                "El DNI es: ".$arrayPasajeros[$i]["documento"]."\n"."\n");
-        }
-    }
 
     /**
      * Este modulo devuelve la cantidad de pasajeros que hay en el viaje
@@ -177,16 +164,6 @@ class Viaje{
         return $cantidad;
     }
 
-    /**
-     * Este modulo devuelve todos los pasajeros del viaje por pantalla
-    */
-    public function verUnPasajero($documento){
-        $index = $this->buscarPasajero($documento);
-        echo ("La ubicacion del pasajero es: ".($index+1)."\n".
-            "El Nombre es: ".($this->getPasajeros())[$index]["nombre"]."\n".
-            "El Apellido es: ".($this->getPasajeros())[$index]["apellido"]."\n".
-            "El DNI es: ".($this->getPasajeros())[$index]["documento"]."\n"."\n");
-    }
 
     /**
      * Este modulo busca si existe el pasajero y devuelve true o false
@@ -198,16 +175,19 @@ class Viaje{
         $dimension = count($arrayPasajeros);
         $existe = false;
         $seguirBuscando = true;
-        do{
-            if($arrayPasajeros[$i]["documento"] == $dni){
-                $seguirBuscando = false;
-                $existe = true;
-            }else{
-            $i++;
-            }
-        }while($seguirBuscando && ($i < $dimension));
+        if($dimension > 0){
+            do{
+                if($arrayPasajeros[$i]["documento"] == $dni){
+                    $seguirBuscando = false;
+                    $existe = true;
+                }else{
+                $i++;
+                }
+            }while($seguirBuscando && ($i < $dimension));
+        }
         return ($existe);
     }
+
 
     /**
      * Este modulo devuelve una cadena de caracteres mostrando el contenido de los atributos
@@ -220,15 +200,11 @@ class Viaje{
                 "El codigo del viaje es: ".$this->getCodigoViaje()."\n");
     }
 
-    /**************************************/
-    /********* FUNCIONES INTERNAS *********/
-    /**************************************/
-    
     /**
      * Este modulo busca si existe el pasajero y devuelve el indice donde se encuentra
      * @return string
     */
-    private function buscarPasajero($dni){
+    public function buscarPasajero($dni){
         $arrayPasajeros = $this->getPasajeros();
         $i = 0;
         $dimension = count($arrayPasajeros);
