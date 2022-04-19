@@ -12,9 +12,9 @@ include "Viaje.php";
 function menu()
 {
     echo "\n"."MENU DE OPCIONES"."\n";
-    echo "1) Saber la cantidad de pasajeros."."\n";
-    echo "2) Ver los pasajeros del viaje."."\n";
-    echo "3) Ver datos del viaje."."\n";
+    echo "1) Agregue mas viajes."."\n";
+    echo "2) Saber la cantidad de pasajeros."."\n";
+    echo "3) Ver los pasajeros y datos del viaje."."\n";
     echo "4) Modificar los datos de un pasajero."."\n";
     echo "5) Agregar un pasajeros al viaje."."\n";
     echo "6) Eliminar un pasajero del viaje."."\n";
@@ -23,9 +23,8 @@ function menu()
     echo "9) Cambiar capacidad maxima del viaje."."\n";
     echo "10) Cambiar codigo del viaje."."\n";
     echo "11) Modificar otro viaje."."\n";
-    echo "12) Crear otro viaje."."\n";
-    echo "13) Elimina un viaje."."\n";
-    echo "14) Ver todos los viajes."."\n";
+    echo "12) Elimina un viaje."."\n";
+    echo "13) Ver todos los viajes."."\n";
     echo "0) Salir"."\n";
     echo "Opcion: ";
     $menu = trim(fgets(STDIN));
@@ -88,9 +87,6 @@ function creaViajes($cant)
 function viajeModificar($viajes)
 {
     separador();
-    $dimension = count($viajes);
-    $buscarCodigo = true;
-    $i = 0;
     echo "Ingrese el codigo del viaje con el que desea interactuar: ";
     $codigo = trim(fgets(STDIN));
     $verificacion = existeViaje($viajes, $codigo);
@@ -179,12 +175,13 @@ function personasViaje($cantidad)
  */
 function mostrarViajes($viajes)
 {
-    $dimension = count($viajes);
-    for($i = 0; $i < $dimension; $i++){
+    $i = 1;
+    foreach($viajes as $viaje){
         separador();
-        echo "Viaje: ".($i+1)."\n";
-        echo $viajes[$i];
+        echo "Viaje: ".($i)."\n";
+        echo $viaje."\n";
         separador();
+        $i++;
     }
 }
 
@@ -210,49 +207,36 @@ function verificadorInt($dato)
     return $dato;
 }
 
-/**
- * Este modulo devuelve todos los pasajeros del viaje por pantalla
-*/
-function verPasajeros($viajes){
-    $arrayPasajeros = $viajes->getPasajeros();
-    $dimension = count($arrayPasajeros);
-    for($i = 0; $i < $dimension; $i++){
-        datoPasajero($viajes, $i);
-    }
-}
-
-/**
- * Este modulo devuelve todos los pasajeros del viaje por pantalla
-*/
-function verUnPasajero($viajes, $documento){
-    $posicion = $viajes->buscarPasajero($documento);
-    datoPasajero($viajes, $posicion);
-}
-
-
-/**
- * Este modulo devuelve todos los pasajeros del viaje por pantalla
-*/
-function datoPasajero($arrayViaje, $index){
-    echo ("La ubicacion del pasajero es: ".($index+1)."\n".
-        "El Nombre es: ".($arrayViaje->getPasajeros())[$index]["nombre"]."\n".
-        "El Apellido es: ".($arrayViaje->getPasajeros())[$index]["apellido"]."\n".
-        "El DNI es: ".($arrayViaje->getPasajeros())[$index]["documento"]."\n"."\n");
-}
-
 /**************************************/
 /********* PROGRAMA PRINCIPAL *********/
 /**************************************/
 
 
 //Este programa ejecuta segun la opcion elegida del usuario la secuencia de pasos a seguir
-$objViaje = inicioPrograma();
-$indexViaje = viajeModificar($objViaje);
+$arrayPersonas = [["nombre"=> "Juan","apellido"=> "Lope","documento"=>42594711],
+                ["nombre"=> "Paula","apellido"=> "Peralta","documento"=>45454545],
+                ["nombre"=> "Maria","apellido"=> "Monjita","documento"=>3251515],
+                ["nombre"=> "Camila","apellido"=> "Rodriguez","documento"=>2541556],
+                ["nombre"=> "Franco","apellido"=> "Stefano","documento"=>45646411],
+                ["nombre"=> "Sebastian","apellido"=> "Legnazzi","documento"=>32454945]];
+$objViaje[0] = new Viaje($arrayPersonas,20,"Neuquen","NQN");
+$indexViaje = 0;
 $opcion = menu();
 do {
 switch ($opcion) {
     
     case 1: 
+        separador();
+        echo "Ingrese la cantidad de viajes que desea agregar: ";
+        $cant = trim(fgets(STDIN));
+        $cant = verificadorInt($cant);
+        $nuevosViajes = creaViajes($cant);
+        $objViaje = array_merge($objViaje, $nuevosViajes);
+        separador();
+        $opcion = menu();
+        break;
+
+    case 2: 
         separador();
         echo "la cantidad de pasajeros del viaje ".$objViaje[$indexViaje]->getDestino()." es: ".$objViaje[$indexViaje]->cantidadPasajeros()."\n";
         separador();
@@ -260,23 +244,13 @@ switch ($opcion) {
         break;
 
 
-    case 2: 
-        separador();
-        echo "Las personas del viaje ".$objViaje[$indexViaje]->getDestino()." son: "."\n";
-        verPasajeros($objViaje[$indexViaje]);
-        separador();
-        $opcion = menu();
-        break;
-
-        
     case 3: 
         separador();
-        echo "Los datos del viaje ".$objViaje[$indexViaje]->getDestino()." son: "."\n";
-        echo $objViaje[$indexViaje]."\n";
+        echo "Las personas y datos del viaje ".$objViaje[$indexViaje]->getDestino()." son: "."\n";
+        echo $objViaje[$indexViaje];
         separador();
         $opcion = menu();
         break;
-       
         
     case 4: 
         separador();
@@ -352,7 +326,7 @@ switch ($opcion) {
         $dni = trim(fgets(STDIN));
         if($objViaje[$indexViaje]->existePasajero($dni)){
             echo "Los datos datos del pasajero ".$dni." son:"."\n";
-            verUnPasajero($objViaje[$indexViaje],$dni);
+            echo $objViaje[$indexViaje]->verUnPasajero($dni);
         }
         separador();
         $opcion = menu();
@@ -404,18 +378,6 @@ switch ($opcion) {
 
     case 12: 
         separador();
-        echo "Ingrese la cantidad de viajes que desea agregar: ";
-        $cant = trim(fgets(STDIN));
-        $cant = verificadorInt($cant);
-        $nuevosViajes = creaViajes($cant);
-        $objViaje = array_merge($objViaje, $nuevosViajes);
-        separador();
-        $opcion = menu();
-        break;
-
-
-    case 13: 
-        separador();
         echo "Ingrese el codigo del viaje que desea eliminar: ";
         $codigo = trim(fgets(STDIN));
         $existe = existeViaje($objViaje, $codigo);
@@ -431,7 +393,7 @@ switch ($opcion) {
         break;
 
 
-    case 14: 
+    case 13: 
         separador();
         echo "Los viajes creados son: "."\n";
         mostrarViajes($objViaje);
@@ -440,7 +402,7 @@ switch ($opcion) {
 
 
     default: 
-        echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 12"."\n"."\n";
+        echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 13"."\n"."\n";
         $opcion = menu();
         break;
     }

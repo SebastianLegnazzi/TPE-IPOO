@@ -194,7 +194,7 @@ class Viaje{
      * @return string
     */
     public function __toString(){
-        return ("Los pasajeros del viaje son: ".count($this->getPasajeros())."\n".
+        return ("Los pasajeros del viaje son: "."\n".$this->pasajerosToString()."\n".
                 "La capacidad maxima del viaje es: ".$this->getCantidadMax()."\n".
                 "El destino del viaje es: ".$this->getDestino()."\n".
                 "El codigo del viaje es: ".$this->getCodigoViaje()."\n");
@@ -202,7 +202,7 @@ class Viaje{
 
     /**
      * Este modulo busca si existe el pasajero y devuelve el indice donde se encuentra
-     * @return string
+     * @return int
     */
     public function buscarPasajero($dni){
         $arrayPasajeros = $this->getPasajeros();
@@ -219,6 +219,44 @@ class Viaje{
             }while($seguirBuscando && ($i < $dimension));
         }
         return ($i);
+    }
+
+    /**
+     * Este modulo devuelve todos los pasajeros del viaje por pantalla
+     * @param int $documento
+     */
+    public function verUnPasajero($documento){
+        $posicion = $this->buscarPasajero($documento);
+        $arrayPasajeros = $this->getPasajeros();
+        $datoPasajero = ("La ubicacion del pasajero es: ".($posicion+1)."\n".
+                        "El Nombre es: ".$arrayPasajeros[$posicion]["nombre"]."\n".
+                        "El Apellido es: ".$arrayPasajeros[$posicion]["apellido"]."\n".
+                        "El DNI es: ".$arrayPasajeros[$posicion]["documento"]."\n"."\n");
+        return $datoPasajero;
+    }
+
+    
+    /**************************************/
+    /********* FUNCIONES PRIVADAS *********/
+    /**************************************/
+
+    /**
+     * Este modulo devuelve un string con todos los pasajeros
+     * @return string
+     */
+    private function pasajerosToString(){
+        $arrayPasajeros = $this->getPasajeros();
+        $i = 1;
+        $separador = "================================";
+        $toString = $separador."\n";
+        foreach ($arrayPasajeros as $pasajero){
+            $toString.=("La ubicacion del pasajero es: ".($i)."\n".
+                        "El Nombre es: ".$pasajero["nombre"]."\n".
+                        "El Apellido es: ".$pasajero["apellido"]."\n".
+                        "El DNI es: ".$pasajero["documento"]."\n"."\n".$separador."\n");
+            $i++;
+        }
+        return $toString;
     }
 
 }
