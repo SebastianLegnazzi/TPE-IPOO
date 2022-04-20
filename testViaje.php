@@ -1,5 +1,7 @@
 <?php
 include "Viaje.php";
+include "Pasajero.php";
+include "ResponsableV.php";
 
 /**************************************/
 /************** MODULOS ***************/
@@ -18,13 +20,14 @@ function menu()
     echo "4) Modificar los datos de un pasajero."."\n";
     echo "5) Agregar un pasajeros al viaje."."\n";
     echo "6) Eliminar un pasajero del viaje."."\n";
-    echo "7) Ver datos de un pasajero"."\n";
-    echo "8) Cambiar destino del viaje."."\n";
-    echo "9) Cambiar capacidad maxima del viaje."."\n";
-    echo "10) Cambiar codigo del viaje."."\n";
-    echo "11) Modificar otro viaje."."\n";
-    echo "12) Elimina un viaje."."\n";
-    echo "13) Ver todos los viajes."."\n";
+    echo "7) Modificar responsable viaje"."\n";
+    echo "8) Ver datos de un pasajero"."\n";
+    echo "9) Cambiar destino del viaje."."\n";
+    echo "10) Cambiar capacidad maxima del viaje."."\n";
+    echo "11) Cambiar codigo del viaje."."\n";
+    echo "12) Modificar otro viaje."."\n";
+    echo "13) Elimina un viaje."."\n";
+    echo "14) Ver todos los viajes."."\n";
     echo "0) Salir"."\n";
     echo "Opcion: ";
     $menu = trim(fgets(STDIN));
@@ -57,6 +60,7 @@ function creaViajes($cant)
     $objViajes = [];
     for($i = 0; $i < $cant;$i++){
         separador();
+        $responsable = responsableViaje();
         echo "Ingrese el codigo del viaje ".($i+1)." : ";
         $codigoViaje = trim(fgets(STDIN));
         echo "Ingrese el destino del viaje ".($i+1)." : ";
@@ -69,7 +73,7 @@ function creaViajes($cant)
         $cantPersonas = verificadorInt($cantPersonas);
         if($cantPersonas <= $cantMax){
             $personas = personasViaje($cantPersonas);
-            $objViajes[$i] = new Viaje($personas,$cantMax,$destViaje,$codigoViaje);
+            $objViajes[$i] = new Viaje($responsable,$personas,$cantMax,$destViaje,$codigoViaje);
             echo "El viaje se ha creado correctamente!"."\n";
         }else{
             echo "La cantidad de personas supera a la cantidad maxima del viaje!"."\n";
@@ -146,6 +150,27 @@ function buscarViaje($arrayViajes, $codigoViaje)
 
 
 /**
+ * Retorna el responsable del vuelo
+ * @return object
+ */
+function responsableViaje()
+{
+    separador();
+    echo "ingrese el nombre del responsable: ";
+    $nombreResp =  trim(fgets(STDIN));
+    echo "ingrese el apellido del responsable: ";
+    $apellidoResp =  trim(fgets(STDIN));
+    echo "ingrese el numero de empleado del responsable: ";
+    $numEmpleadoResp =  trim(fgets(STDIN));
+    echo "ingrese el numero de licencia del responsable: ";
+    $numLincenciaResp =  trim(fgets(STDIN));
+    separador();
+    echo "\n";
+    $responsableV = new ResponsableV($nombreResp,$apellidoResp,$numEmpleadoResp,$numLincenciaResp);
+    return $responsableV;
+}
+
+/**
  * Retorna un array con todos los pasajeros del viaje
  * @param int $cantidad
  * @return array
@@ -161,9 +186,11 @@ function personasViaje($cantidad)
         $apellidoPasajero =  trim(fgets(STDIN));
         echo "ingrese el DNI del pasajero ".($i+1).": ";
         $dniPasajero =  trim(fgets(STDIN));
+        echo "ingrese el telefono del pasajero ".($i+1).": ";
+        $telefonoPasajero =  trim(fgets(STDIN));
         separador();
         echo "\n";
-        $arrayPersonas[$i] = ["nombre"=> $nombrePasajero,"apellido"=> $apellidoPasajero,"documento"=>$dniPasajero];
+        $arrayPersonas[$i] = new Pasajero($nombrePasajero,$apellidoPasajero,$dniPasajero,$telefonoPasajero);
     }
     return $arrayPersonas;
 }
@@ -213,13 +240,13 @@ function verificadorInt($dato)
 
 
 //Este programa ejecuta segun la opcion elegida del usuario la secuencia de pasos a seguir
-$arrayPersonas = [["nombre"=> "Juan","apellido"=> "Lope","documento"=>42594711],
-                ["nombre"=> "Paula","apellido"=> "Peralta","documento"=>45454545],
-                ["nombre"=> "Maria","apellido"=> "Monjita","documento"=>3251515],
-                ["nombre"=> "Camila","apellido"=> "Rodriguez","documento"=>2541556],
-                ["nombre"=> "Franco","apellido"=> "Stefano","documento"=>45646411],
-                ["nombre"=> "Sebastian","apellido"=> "Legnazzi","documento"=>32454945]];
-$objViaje[0] = new Viaje($arrayPersonas,20,"Neuquen","NQN");
+$arrayPersonas = [new Pasajero("Paula","Lopez",4020310,29946879),
+                new Pasajero("Mariano","Martinez",4687955,29946879),
+                new Pasajero("Sebastian","Legnazzi",4397918,299646879),
+                new Pasajero("Alejandra","Alegre",2546548,299564787),
+                new Pasajero("Martina","Laurel",3533646,299566477),
+                new Pasajero("Mauricio","Lamelin",4343458,29948997)];
+$objViaje[0] = new Viaje(new ResponsableV("Pablo","Orejas",516464,787554),$arrayPersonas,20,"Neuquen","NQN");
 $indexViaje = 0;
 $opcion = menu();
 do {
@@ -268,7 +295,7 @@ switch ($opcion) {
             $objViaje[$indexViaje]->cambiarDatoPasajero($dni,$tipoDatoCambiar,$nuevoValor);
             echo "El dato se ha modificado correctamente!"."\n";
         }else{
-            echo "Debes crear un viaje antes de usas las opciones. Seleccione la opcion 1"."\n";
+            echo "El DNI del pasajero ingresado no existe!"."\n";
         }
         separador();
         $opcion = menu();
@@ -280,19 +307,12 @@ switch ($opcion) {
         $superaCapacidad = $objViaje[$indexViaje]->superaCapacidad();
         if($superaCapacidad){
             echo "Ingrese cuantos pasajeros nuevos ingresaran al viaje: ";
-            $pasajerosNuevos = trim(fgets(STDIN));
-            $cantidadAumentada = $objViaje[$indexViaje]->cantidadPasajeros() + $pasajerosNuevos;
+            $cantPasajerosNuevos = trim(fgets(STDIN));
+            verificadorInt($cantPasajerosNuevos);
+            $cantidadAumentada = $objViaje[$indexViaje]->cantidadPasajeros() + $cantPasajerosNuevos;
             if($cantidadAumentada <= $objViaje[$indexViaje]->getCantidadMax()){
-                for($i=0;$i < $pasajerosNuevos;$i++){
-                    echo "Ingrese el nombre del nuevo pasajero: ";
-                    $nombrePasajero = trim(fgets(STDIN));
-                    echo "Ingrese el apellido del nuevo pasajero: ";
-                    $apellidoPasajero = trim(fgets(STDIN));
-                    echo "Ingrese el DNI del nuevo pasajero: ";
-                    $dniPasajero = trim(fgets(STDIN));
-                    $pasajero = ["nombre"=> $nombrePasajero,"apellido"=> $apellidoPasajero,"documento"=>$dniPasajero];
-                    $objViaje[$indexViaje]->agregarPasajero($pasajero);
-                }
+                $arrayPasajeros = personasViaje($cantPasajerosNuevos);
+                $objViaje[$indexViaje]->agregarPasajero($arrayPasajeros);
                 echo "Los pasajeros se agregaron correctamente al viaje!"."\n";
             }else{
                 echo "La cantidad de pasajeros es superior a la capacidad maxima!"."\n";
@@ -322,6 +342,35 @@ switch ($opcion) {
 
     case 7: 
         separador();
+        echo "Ingrese que dato desea cambiar (Nombre/Apellido/Numero Empleado/Numero Licencia/Todo): ";
+        $tipoDatoCambiar = strtolower(trim(fgets(STDIN)));
+        while(($tipoDatoCambiar <> "nombre") && ($tipoDatoCambiar <> "apellido") && ($tipoDatoCambiar <> "numero empleado") && ($tipoDatoCambiar <> "numero licencia") && ($tipoDatoCambiar <> "todo")){
+            echo "El valor ".$tipoDatoCambiar." no es correcto, Por favor ingrese (Nombre/Apellido/Numero Empleado/Numero Licencia/Todo): ";
+            $tipoDatoCambiar = trim(fgets(STDIN));
+        }
+        if($tipoDatoCambiar == "todo"){
+            echo "Ingrese el nombre: ";
+            $nombre = trim(fgets(STDIN));
+            echo "Ingrese el apellido: ";
+            $apellido = trim(fgets(STDIN));
+            echo "Ingrese el Numero de Empleado: ";
+            $numEmpleado = trim(fgets(STDIN));
+            echo "Ingrese el Numero de Licencia: ";
+            $numLicencia = trim(fgets(STDIN));
+            echo "los datos se han modificado correctamente!"."\n";
+            $objViaje[$indexViaje]->setResponsableV(new ResponsableV($nombre,$apellido,$numEmpleado,$numLicencia));
+        }else{
+            echo "Ingrese el nuevo dato: ";
+            $nuevoValor = trim(fgets(STDIN));
+            $objViaje[$indexViaje]->cambiarDatoResponsable($tipoDatoCambiar,$nuevoValor);
+            echo "El dato se ha modificado correctamente!"."\n";
+        }
+        separador();
+        $opcion = menu();
+        break;
+
+    case 8: 
+        separador();
         echo "ingrese el DNI del pasajero que desea buscar: ";
         $dni = trim(fgets(STDIN));
         if($objViaje[$indexViaje]->existePasajero($dni)){
@@ -333,7 +382,7 @@ switch ($opcion) {
         break;
 
 
-    case 8: 
+    case 9: 
         separador();
         echo "ingrese el nuevo destino: ";
         $nuevoDestino = trim(fgets(STDIN));
@@ -344,7 +393,7 @@ switch ($opcion) {
         break;
 
 
-    case 9: 
+    case 10: 
         separador();
         echo "ingrese la nueva capacidad del viaje: ";
         $nuevaCapacidad = trim(fgets(STDIN));
@@ -359,7 +408,7 @@ switch ($opcion) {
         break;
 
 
-    case 10: 
+    case 11: 
         separador();
         echo "ingrese el nuevo codigo del viaje: ";
         $nuevoCodigo = trim(fgets(STDIN));
@@ -370,13 +419,13 @@ switch ($opcion) {
         break;
 
 
-    case 11: 
+    case 12: 
         $indexViaje = viajeModificar($objViaje);
         $opcion = menu();
         break;
 
 
-    case 12: 
+    case 13: 
         separador();
         echo "Ingrese el codigo del viaje que desea eliminar: ";
         $codigo = trim(fgets(STDIN));
@@ -393,7 +442,7 @@ switch ($opcion) {
         break;
 
 
-    case 13: 
+    case 14: 
         separador();
         echo "Los viajes creados son: "."\n";
         mostrarViajes($objViaje);
@@ -402,7 +451,7 @@ switch ($opcion) {
 
 
     default: 
-        echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 13"."\n"."\n";
+        echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 14"."\n"."\n";
         $opcion = menu();
         break;
     }

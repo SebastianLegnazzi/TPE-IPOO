@@ -4,6 +4,7 @@ class Viaje{
     private $destino;
     private $cantidadMax;
     private $pasajeros;
+    private $responsableV;
 
     
     /**************************************/
@@ -44,6 +45,13 @@ class Viaje{
      */ 
     public function setPasajeros($pasajeros){
         $this->pasajeros = $pasajeros;
+    }
+
+    /**
+     * Establece el valor de responsable
+     */ 
+    public function setResponsableV($responsableV){
+        $this->responsableV = $responsableV;
     }
 
 
@@ -87,6 +95,14 @@ class Viaje{
         return $this->codigoViaje;
     }
 
+    /**
+     * Obtiene el valor de responsable
+     */ 
+    public function getResponsableV(){
+        return $this->responsableV;
+    }
+
+
     /**************************************/
     /************** FUNCIONES *************/
     /**************************************/
@@ -98,7 +114,8 @@ class Viaje{
      * @param string $destino
      * @param int $codigoViaje
     */
-    public function __construct($pasajeros,$cantidadMax,$destino,$codigoViaje){
+    public function __construct($responsableV, $pasajeros,$cantidadMax,$destino,$codigoViaje){
+        $this->responsableV = $responsableV;
         $this->pasajeros = $pasajeros;
         $this->cantidadMax = $cantidadMax;
         $this->destino = $destino;
@@ -108,17 +125,41 @@ class Viaje{
     /**
      * Este modulo cambia datos del array Pasajeros
      * @param int $documento
-     * @param string $index
+     * @param string $datoACambiar
      * @param string $dato
-     * @return array
     */
     public function cambiarDatoPasajero($documento,$datoACambiar,$dato){
         $arrayPasajeros = $this->getPasajeros();
-        $i = 0;
-        $dimension = count($arrayPasajeros);
-        $indice = $this->buscarPasajero($documento);
-        $arrayPasajeros[$indice][$datoACambiar] = $dato;
+        $objPasajero = $this->buscarPasajero($documento);
+        if("nombre" == $datoACambiar){
+            $objPasajero->setNombre($dato);
+        }else if ("apellido" == $datoACambiar){
+            $objPasajero->setApellido($dato);
+        }else if ("documento" == $datoACambiar){
+            $objPasajero->setDocumento($dato);
+        }else{
+            $objPasajero->setTelefono($dato);
+        }
+        array_push($arrayPasajeros, $objPasajero);
         $this->setPasajeros($arrayPasajeros);
+    }
+
+    /**
+     * Este modulo cambia datos del responsable del vuelo
+     * @param string $datoACambiar
+     * @param string $dato
+    */
+    public function cambiarDatoResponsable($datoACambiar,$dato){
+        $responsableV = $this->getResponsableV();
+        if("nombre" == $datoACambiar){
+            $responsableV->setNombre($dato);
+        }else if ("apellido" == $datoACambiar){
+            $responsableV->setApellido($dato);
+        }else if ("numero empleado" == $datoACambiar){
+            $responsableV->setNumEmpleado($dato);
+        }else{
+            $responsableV->setNumLicencia($dato);
+        }
     }
 
     /**
@@ -127,8 +168,7 @@ class Viaje{
     */
     public function agregarPasajero($nuevoPasajero){
         $arrayPasajeros = $this->getPasajeros();
-        array_push($arrayPasajeros, $nuevoPasajero);
-        $this->setPasajeros($arrayPasajeros);
+        $this->setPasajeros(array_merge($arrayPasajeros, $nuevoPasajero));
     }
 
     /**
@@ -139,10 +179,24 @@ class Viaje{
     public function quitarPasajero($documento){
         $arrayPasajeros = $this->getPasajeros();
         $dimension = count($arrayPasajeros);
-        $indice = $this->buscarPasajero($documento);
-        unset($arrayPasajeros[$indice]);
-        sort($arrayPasajeros);
-        $this->setPasajeros($arrayPasajeros);
+        $buscar = true;
+        $i = 0;
+        while($buscar && $i <= $dimension){
+            if($arrayPasajeros[$i]->getDocumento() == $documento){
+                $buscar = false;
+            }else{
+                $i++;
+            }
+        }
+        if(!$buscar){
+            unset($arrayPasajeros[$i]);
+            sort($arrayPasajeros);
+            $this->setPasajeros($arrayPasajeros);
+            $verificacion = true;
+        }else{
+            $verificacion = false;
+        }
+        return $verificacion;
         }
 
     /**
@@ -174,65 +228,62 @@ class Viaje{
         $i = 0;
         $dimension = count($arrayPasajeros);
         $existe = false;
-        $seguirBuscando = true;
         if($dimension > 0){
             do{
-                if($arrayPasajeros[$i]["documento"] == $dni){
-                    $seguirBuscando = false;
+                if($arrayPasajeros[$i]->getDocumento() == $dni){
                     $existe = true;
                 }else{
                 $i++;
                 }
-            }while($seguirBuscando && ($i < $dimension));
+            }while(!$existe && ($i < $dimension));
         }
         return ($existe);
     }
 
+    
+    /**
+     * Este modulo busca si existe el pasajero y devuelve el objeto con el pasajero
+     * @return object
+     */
+    public function buscarPasajero($dni){
+        $arrayPasajeros = $this->getPasajeros();
+        $i = 0;
+        $dimension = count($arrayPasajeros);
+        $pasajero = null;
+        $seguirBuscando = true;
+        if($this->existePasajero($dni)){
+            do{
+                if($arrayPasajeros[$i]->getDocumento() == $dni){
+                    $seguirBuscando = false;
+                    $pasajero = $arrayPasajeros[$i];
+                }else{
+                    $i++;
+                }
+            }while($seguirBuscando && ($i < $dimension));
+        }
+        return ($pasajero);
+    }
+    
 
     /**
      * Este modulo devuelve una cadena de caracteres mostrando el contenido de los atributos
      * @return string
     */
     public function __toString(){
-        return ("Los pasajeros del viaje son: "."\n".$this->pasajerosToString()."\n".
-                "La capacidad maxima del viaje es: ".$this->getCantidadMax()."\n".
-                "El destino del viaje es: ".$this->getDestino()."\n".
-                "El codigo del viaje es: ".$this->getCodigoViaje()."\n");
+        return ("El destino del viaje es: ".$this->getDestino()."\n".
+                "El codigo del viaje es: ".$this->getCodigoViaje()."\n".
+                "La capacidad maxima del viaje es: ".$this->getCantidadMax()."\n"."\n".
+                "El responsable del viaje es: "."\n".$this->getResponsableV()."\n".
+                "Los pasajeros del viaje son: "."\n".$this->pasajerosToString()."\n");
     }
 
     /**
-     * Este modulo busca si existe el pasajero y devuelve el indice donde se encuentra
-     * @return int
-    */
-    public function buscarPasajero($dni){
-        $arrayPasajeros = $this->getPasajeros();
-        $i = 0;
-        $dimension = count($arrayPasajeros);
-        if($this->existePasajero($dni)){
-            do{
-                $seguirBuscando = true;
-                if($arrayPasajeros[$i]["documento"] == $dni){
-                    $seguirBuscando = false;
-                }else{
-                $i++;
-                }
-            }while($seguirBuscando && ($i < $dimension));
-        }
-        return ($i);
-    }
-
-    /**
-     * Este modulo devuelve todos los pasajeros del viaje por pantalla
+     * Este modulo devuelve el pasajero buscado
      * @param int $documento
      */
     public function verUnPasajero($documento){
-        $posicion = $this->buscarPasajero($documento);
-        $arrayPasajeros = $this->getPasajeros();
-        $datoPasajero = ("La ubicacion del pasajero es: ".($posicion+1)."\n".
-                        "El Nombre es: ".$arrayPasajeros[$posicion]["nombre"]."\n".
-                        "El Apellido es: ".$arrayPasajeros[$posicion]["apellido"]."\n".
-                        "El DNI es: ".$arrayPasajeros[$posicion]["documento"]."\n"."\n");
-        return $datoPasajero;
+        $objPasajero = $this->buscarPasajero($documento);
+        return $objPasajero;
     }
 
     
@@ -250,15 +301,10 @@ class Viaje{
         $separador = "================================";
         $toString = $separador."\n";
         foreach ($arrayPasajeros as $pasajero){
-            $toString.=("La ubicacion del pasajero es: ".($i)."\n".
-                        "El Nombre es: ".$pasajero["nombre"]."\n".
-                        "El Apellido es: ".$pasajero["apellido"]."\n".
-                        "El DNI es: ".$pasajero["documento"]."\n"."\n".$separador."\n");
-            $i++;
+           $toString.=$pasajero."\n".$separador."\n";
         }
         return $toString;
     }
-
 }
 
 ?>
