@@ -113,6 +113,7 @@ class Viaje{
      * @param int $cantidadMax
      * @param string $destino
      * @param int $codigoViaje
+     * @param object $responsableV
     */
     public function __construct($responsableV, $pasajeros,$cantidadMax,$destino,$codigoViaje){
         $this->responsableV = $responsableV;
@@ -120,46 +121,6 @@ class Viaje{
         $this->cantidadMax = $cantidadMax;
         $this->destino = $destino;
         $this->codigoViaje = $codigoViaje;
-    }
-
-    /**
-     * Este modulo cambia datos del array Pasajeros
-     * @param int $documento
-     * @param string $datoACambiar
-     * @param string $dato
-    */
-    public function cambiarDatoPasajero($documento,$datoACambiar,$dato){
-        $arrayPasajeros = $this->getPasajeros();
-        $objPasajero = $this->buscarPasajero($documento);
-        if("nombre" == $datoACambiar){
-            $objPasajero->setNombre($dato);
-        }else if ("apellido" == $datoACambiar){
-            $objPasajero->setApellido($dato);
-        }else if ("documento" == $datoACambiar){
-            $objPasajero->setDocumento($dato);
-        }else{
-            $objPasajero->setTelefono($dato);
-        }
-        array_push($arrayPasajeros, $objPasajero);
-        $this->setPasajeros($arrayPasajeros);
-    }
-
-    /**
-     * Este modulo cambia datos del responsable del vuelo
-     * @param string $datoACambiar
-     * @param string $dato
-    */
-    public function cambiarDatoResponsable($datoACambiar,$dato){
-        $responsableV = $this->getResponsableV();
-        if("nombre" == $datoACambiar){
-            $responsableV->setNombre($dato);
-        }else if ("apellido" == $datoACambiar){
-            $responsableV->setApellido($dato);
-        }else if ("numero empleado" == $datoACambiar){
-            $responsableV->setNumEmpleado($dato);
-        }else{
-            $responsableV->setNumLicencia($dato);
-        }
     }
 
     /**
@@ -212,6 +173,7 @@ class Viaje{
 
     /**
      * Este modulo devuelve la cantidad de pasajeros que hay en el viaje
+     * @return int
     */
     public function cantidadPasajeros(){
         $cantidad = count($this->getPasajeros());
@@ -221,6 +183,7 @@ class Viaje{
 
     /**
      * Este modulo busca si existe el pasajero y devuelve true o false
+     * @param $dni
      * @return boolean
     */
     public function existePasajero($dni){
@@ -243,6 +206,7 @@ class Viaje{
     
     /**
      * Este modulo busca si existe el pasajero y devuelve el objeto con el pasajero
+     * @param $dni
      * @return object
      */
     public function buscarPasajero($dni){
@@ -277,9 +241,11 @@ class Viaje{
                 "Los pasajeros del viaje son: "."\n".$this->pasajerosToString()."\n");
     }
 
+    
     /**
      * Este modulo devuelve el pasajero buscado
      * @param int $documento
+     * @return object
      */
     public function verUnPasajero($documento){
         $objPasajero = $this->buscarPasajero($documento);
