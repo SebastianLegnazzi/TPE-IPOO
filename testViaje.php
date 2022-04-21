@@ -60,6 +60,7 @@ function inicioPrograma()
 function creaViajes($cant)
 {
     $arrayViajes = [];
+    $arrayPasajeros = [];
     for($i = 0; $i < $cant;$i++){
         separador();
         $responsable = responsableViaje();
@@ -74,8 +75,11 @@ function creaViajes($cant)
         $cantPersonas = trim(fgets(STDIN));
         $cantPersonas = verificadorInt($cantPersonas);
         if($cantPersonas <= $cantMax){
-            $personas = personasViaje($cantPersonas);
-            $arrayViajes[$i] = new Viaje($responsable,$personas,$cantMax,$destViaje,$codigoViaje);
+            for($i = 0;$i <= $cantPersonas;$i++){
+            $objPasajero = personasViaje();
+            array_push($arrayPasajeros, $objPasajero);
+            }
+            $arrayViajes[$i] = new Viaje($responsable,$arrayPasajeros,$cantMax,$destViaje,$codigoViaje);
             echo "El viaje se ha creado correctamente!"."\n";
         }else{
             echo "La cantidad de personas supera a la cantidad maxima del viaje!"."\n";
@@ -173,28 +177,22 @@ function responsableViaje()
 }
 
 /**
- * Retorna un array con todos los pasajeros del viaje
- * @param int $cantidad
- * @return array
+ * Retorna un objPerosna con todos los datos del pasajero del viaje
+ * @return object
  */
-function personasViaje($cantidad)
+function personasViaje()
 {
-    $arrayPersonas = [];
-    for($i = 0; $i < $cantidad; $i++){
-        separador();
-        echo "ingrese el nombre del pasajero ".($i+1).": ";
-        $nombrePasajero =  trim(fgets(STDIN));
-        echo "ingrese el apellido del pasajero ".($i+1).": ";
-        $apellidoPasajero =  trim(fgets(STDIN));
-        echo "ingrese el DNI del pasajero ".($i+1).": ";
-        $dniPasajero =  trim(fgets(STDIN));
-        echo "ingrese el telefono del pasajero ".($i+1).": ";
-        $telefonoPasajero =  trim(fgets(STDIN));
-        separador();
-        echo "\n";
-        $arrayPersonas[$i] = new Pasajero($nombrePasajero,$apellidoPasajero,$dniPasajero,$telefonoPasajero);
-    }
-    return $arrayPersonas;
+    echo "ingrese el nombre del pasajero: ";
+    $nombrePasajero =  trim(fgets(STDIN));
+    echo "ingrese el apellido del pasajero: ";
+    $apellidoPasajero =  trim(fgets(STDIN));
+    echo "ingrese el DNI del pasajero: ";
+    $dniPasajero =  trim(fgets(STDIN));
+    echo "ingrese el telefono del pasajero: ";
+    $telefonoPasajero =  trim(fgets(STDIN));
+    echo "\n";
+    $objPersona = new Pasajero($nombrePasajero,$apellidoPasajero,$dniPasajero,$telefonoPasajero);
+    return $objPersona;
 }
 
 
@@ -442,8 +440,10 @@ switch ($opcion) {
             $cantPasajerosNuevos = verificadorInt($cantPasajerosNuevos);
             $cantidadAumentada = $arrayViajes[$indexViaje]->cantidadPasajeros() + $cantPasajerosNuevos;
             if($cantidadAumentada <= $arrayViajes[$indexViaje]->getCantidadMax()){
-                $arrayPasajeros = personasViaje($cantPasajerosNuevos, $arrayViajes[$indexViaje]);
-                $arrayViajes[$indexViaje]->agregarPasajero($arrayPasajeros);
+                for($i = 0;$i < $cantPasajerosNuevos;$i++){
+                    $objPasajero = personasViaje();
+                    $arrayViajes[$indexViaje]->agregarPasajero($objPasajero);
+                }                
                 echo "Los pasajeros se agregaron correctamente al viaje!"."\n";
             }else{
                 echo "La cantidad de pasajeros es superior a la capacidad maxima!"."\n";
@@ -462,7 +462,6 @@ switch ($opcion) {
         $dni = trim(fgets(STDIN));
         if($arrayViajes[$indexViaje]->existePasajero($dni)){
             $arrayViajes[$indexViaje]->quitarPasajero($dni);
-            echo "El pasajero se elimino correctamente!"."\n";
         }else{
             echo "El DNI no coincide con ningun pasajero del vuelo"."\n";
         }

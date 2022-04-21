@@ -3,7 +3,7 @@ class Viaje{
     private $codigoViaje;
     private $destino;
     private $cantidadMax;
-    private $pasajeros;
+    private $arrayPasajero;
     private $responsableV;
 
     
@@ -43,8 +43,8 @@ class Viaje{
      *
      * @param array $pasajeros
      */ 
-    public function setPasajeros($pasajeros){
-        $this->pasajeros = $pasajeros;
+    public function setArrayPasajero($arrayPasajero){
+        $this->arrayPasajero = $arrayPasajero;
     }
 
     /**
@@ -64,8 +64,8 @@ class Viaje{
      * 
      * @return array
      */ 
-    public function getPasajeros(){
-        return $this->pasajeros;
+    public function getArrayPasajero(){
+        return $this->arrayPasajero;
     }
 
     /**
@@ -109,15 +109,15 @@ class Viaje{
 
     /**
      * Este modulo asigna los valores a los atributos cuando se crea una instancia de la clase 
-     * @param array $pasajeros
+     * @param array $arrayPasajero
      * @param int $cantidadMax
      * @param string $destino
      * @param int $codigoViaje
      * @param object $responsableV
     */
-    public function __construct($responsableV, $pasajeros,$cantidadMax,$destino,$codigoViaje){
+    public function __construct($responsableV, $arrayPasajero,$cantidadMax,$destino,$codigoViaje){
         $this->responsableV = $responsableV;
-        $this->pasajeros = $pasajeros;
+        $this->arrayPasajero = $arrayPasajero;
         $this->cantidadMax = $cantidadMax;
         $this->destino = $destino;
         $this->codigoViaje = $codigoViaje;
@@ -125,11 +125,15 @@ class Viaje{
 
     /**
      * Este modulo agrega un nuevo pasajero al final del array pasajero existente.
-     * @param array $nuevoPasajero
+     * @param object $nuevoObjPasajero
     */
-    public function agregarPasajero($nuevoPasajero){
-        $arrayPasajeros = $this->getPasajeros();
-        $this->setPasajeros(array_merge($arrayPasajeros, $nuevoPasajero));
+    public function agregarPasajero($nuevoObjPasajero){
+        $existe = $this->existePasajero($nuevoObjPasajero->getDocumento());
+        if(!$existe){
+            $arrayPasajeros = $this->getArrayPasajero();
+            array_push($arrayPasajeros, $nuevoObjPasajero);
+            $this->setArrayPasajero($arrayPasajeros);
+        }
     }
 
     /**
@@ -138,7 +142,7 @@ class Viaje{
      * @return boolean
     */
     public function quitarPasajero($documento){
-        $arrayPasajeros = $this->getPasajeros();
+        $arrayPasajeros = $this->getArrayPasajero();
         $dimension = count($arrayPasajeros);
         $buscar = true;
         $i = 0;
@@ -152,7 +156,7 @@ class Viaje{
         if(!$buscar){
             unset($arrayPasajeros[$i]);
             sort($arrayPasajeros);
-            $this->setPasajeros($arrayPasajeros);
+            $this->setArrayPasajero($arrayPasajeros);
             $verificacion = true;
         }else{
             $verificacion = false;
@@ -165,7 +169,7 @@ class Viaje{
      * @return boolean
     */
     public function superaCapacidad(){
-        $capacidad = count($this->getPasajeros());
+        $capacidad = count($this->getArrayPasajero());
         $verificacion = ($capacidad < $this->getCantidadMax()) ? true : false;
         return $verificacion;
     }
@@ -176,7 +180,7 @@ class Viaje{
      * @return int
     */
     public function cantidadPasajeros(){
-        $cantidad = count($this->getPasajeros());
+        $cantidad = count($this->getArrayPasajero());
         return $cantidad;
     }
 
@@ -187,7 +191,7 @@ class Viaje{
      * @return boolean
     */
     public function existePasajero($dni){
-        $arrayPasajeros = $this->getPasajeros();
+        $arrayPasajeros = $this->getArrayPasajero();
         $i = 0;
         $dimension = count($arrayPasajeros);
         $existe = false;
@@ -210,7 +214,7 @@ class Viaje{
      * @return object
      */
     public function buscarPasajero($dni){
-        $arrayPasajeros = $this->getPasajeros();
+        $arrayPasajeros = $this->getArrayPasajero();
         $i = 0;
         $dimension = count($arrayPasajeros);
         $pasajero = null;
@@ -262,7 +266,7 @@ class Viaje{
      * @return string
      */
     private function pasajerosToString(){
-        $arrayPasajeros = $this->getPasajeros();
+        $arrayPasajeros = $this->getArrayPasajero();
         $i = 1;
         $separador = "================================";
         $toString = $separador."\n";
