@@ -75,7 +75,7 @@ function creaViajes($cant)
         $cantPersonas = trim(fgets(STDIN));
         $cantPersonas = verificadorInt($cantPersonas);
         if($cantPersonas <= $cantMax){
-            for($i = 0;$i <= $cantPersonas;$i++){
+            for($i = 0;$i < $cantPersonas;$i++){
             $objPasajero = personasViaje();
             array_push($arrayPasajeros, $objPasajero);
             }
@@ -97,6 +97,10 @@ function creaViajes($cant)
 function viajeModificar($viajes)
 {
     separador();
+    echo "los viajes son: "."\n";
+    foreach($viajes as $viaje){
+        echo "El codigo del viaje con destino a ".$viaje->getDestino()." es: ".$viaje->getCodigoViaje()."\n";
+    }
     echo "Ingrese el codigo del viaje con el que desea interactuar: ";
     $codigo = trim(fgets(STDIN));
     $verificacion = existeViaje($viajes, $codigo);
@@ -367,20 +371,30 @@ function cambiarDatoResponsable($objResponsable)
         }while($seleccion < 6 || $seleccion > 6);
 }
 
+/**************************************/
+/******** VIAJES PRECARGADOS **********/
+/**************************************/
+
+//Viaje 1
+$arrayPersonas = [new Pasajero("Paula","Lopez",4020310,29946879),
+                new Pasajero("Mariano","Martinez",4687955,29946879),
+                new Pasajero("Juan","Legnazzi",3801546,29945879)];
+$arrayViajes[0] = new Viaje(new ResponsableV("Pablo","Orejas",516464,787554),$arrayPersonas,20,"Neuquen",1);
+//Viaje 2
+$arrayPersonas = [new Pasajero("Sebastian","Legnazzi",4397918,299646879),
+                new Pasajero("Alejandra","Alegre",2546548,299564787)];
+$arrayViajes[1] = new Viaje(new ResponsableV("Felipe","Ortega",516778,55554),$arrayPersonas,30,"Misiones",2);
+//Viaje 3
+$arrayPersonas = [new Pasajero("Martina","Laurel",3533646,299566477),
+                new Pasajero("Mauricio","Lamelin",4343458,29948997)];
+$arrayViajes[2] = new Viaje(new ResponsableV("Chano","Tanbionica",121254,64684),$arrayPersonas,50,"Buenos Aires",3);
 
 /**************************************/
 /********* PROGRAMA PRINCIPAL *********/
 /**************************************/
 
 //Este programa ejecuta segun la opcion elegida del usuario la secuencia de pasos a seguir
-$arrayPersonas = [new Pasajero("Paula","Lopez",4020310,29946879),
-                new Pasajero("Mariano","Martinez",4687955,29946879),
-                new Pasajero("Sebastian","Legnazzi",4397918,299646879),
-                new Pasajero("Alejandra","Alegre",2546548,299564787),
-                new Pasajero("Martina","Laurel",3533646,299566477),
-                new Pasajero("Mauricio","Lamelin",4343458,29948997)];
-$arrayViajes[0] = new Viaje(new ResponsableV("Pablo","Orejas",516464,787554),$arrayPersonas,20,"Neuquen","NQN");
-$indexViaje = 0;
+$indexViaje = viajeModificar($arrayViajes);
 $opcion = menu();
 do {
 switch ($opcion) {
