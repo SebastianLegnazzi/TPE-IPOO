@@ -249,10 +249,9 @@ function cambiarDatoPasajero($objPasajero)
         echo "Ingrese que dato desea cambiar: "."\n".
              "1. Modificar Nombre "."\n".
              "2. Modificar Apellido "."\n".
-             "3. Modificar DNI "."\n".
-             "4. Modificar Telefono "."\n".
-             "5. Ver datos "."\n".
-             "6. Salir "."\n";
+             "3. Modificar Telefono "."\n".
+             "4. Ver datos "."\n".
+             "5. Salir "."\n";
         $seleccion = trim(fgets(STDIN));
         switch ($seleccion){
             case 1: 
@@ -275,15 +274,6 @@ function cambiarDatoPasajero($objPasajero)
 
             case 3: 
                 separador();
-                echo "Ingrese el nuevo DNI: "; 
-                $nuevoDni = trim(fgets(STDIN));
-                $objPasajero->setDocumento($nuevoDni);
-                echo "El DNI se ha cambiado correctamente!"."\n";
-                separador();
-                break;
-
-            case 4: 
-                separador();
                 echo "Ingrese el nuevo Telefono: "; 
                 $nuevoTelefono = trim(fgets(STDIN));
                 $objPasajero->setTelefono($nuevoTelefono);
@@ -291,18 +281,18 @@ function cambiarDatoPasajero($objPasajero)
                 separador();
                 break;
 
-            case 5: 
+            case 4: 
                 separador();
                 echo $objPasajero;
                 separador();
                 break;
 
             default:
-            echo "El número que ingresó no es válido, por favor ingrese un número del 1 al 6"."\n"."\n";
+            echo "El número que ingresó no es válido, por favor ingrese un número del 1 al 5"."\n"."\n";
             break;
                 
         }
-        }while($seleccion < 6 || $seleccion > 6);
+        }while($seleccion < 5 || $seleccion > 5);
 }
 
 /**
