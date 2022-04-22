@@ -174,6 +174,50 @@ class Viaje{
         return $verificacion;
     }
 
+    /**
+     * Este modulo cambia datos del array Pasajeros
+     * @param int $documento
+     * @param int $opcion
+     * @param string $dato
+    */
+    public function cambiarDatoPasajero($documento,$opcion,$dato){
+        $objPasajero = $this->buscarPasajero($documento);
+        switch($opcion){
+            case 1: 
+                $objPasajero->setNombre($dato);
+            break;
+            case 2: 
+                $objPasajero->setApellido($dato);
+            break;
+            case 3: 
+                $objPasajero->setTelefono($dato);
+            break;
+        }
+    }
+
+    /**
+     * Este modulo cambia datos del responsable del viaje
+     * @param int $opcion
+     * @param string $dato
+    */
+    public function cambiarDatoResponsable($opcion,$dato){
+        $objRespo = $this->getResponsableV();
+        switch($opcion){
+            case 1: 
+                $objRespo->setNombre($dato);
+            break;
+            case 2: 
+                $objRespo->setApellido($dato);
+            break;
+            case 3: 
+                $objRespo->setNumEmpleado($dato);
+            break;
+            case 4: 
+                $objRespo->setNumLicencia($dato);
+            break;
+        }
+    }
+
 
     /**
      * Este modulo devuelve la cantidad de pasajeros que hay en el viaje

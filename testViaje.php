@@ -241,9 +241,9 @@ function verificadorInt($dato)
 
 /**
  * Este modulo cambia datos del array Pasajeros
- * @param object $objPasajero
+ * @param object $viaje
  */
-function cambiarDatoPasajero($objPasajero)
+function cambiarDatoPasajero($viaje, $dni)
 {
     do{
         echo "Ingrese que dato desea cambiar: "."\n".
@@ -258,7 +258,7 @@ function cambiarDatoPasajero($objPasajero)
                 separador();
                 echo "Ingrese el nuevo nombre: "; 
                 $nuevoNombre = trim(fgets(STDIN));
-                $objPasajero->setNombre($nuevoNombre);
+                $viaje->cambiarDatoPasajero($dni, $seleccion, $nuevoNombre);
                 echo "El nombre se ha cambiado correctamente!"."\n";
                 separador();
                 break;
@@ -267,7 +267,7 @@ function cambiarDatoPasajero($objPasajero)
                 separador();
                 echo "Ingrese el nuevo apellido: "; 
                 $nuevoApellido = trim(fgets(STDIN));
-                $objPasajero->setApellido($nuevoApellido);
+                $viaje->cambiarDatoPasajero($dni, $seleccion, $nuevoApellido);
                 echo "El apellido se ha cambiado correctamente!"."\n";
                 separador();
                 break;
@@ -276,14 +276,14 @@ function cambiarDatoPasajero($objPasajero)
                 separador();
                 echo "Ingrese el nuevo Telefono: "; 
                 $nuevoTelefono = trim(fgets(STDIN));
-                $objPasajero->setTelefono($nuevoTelefono);
+                $viaje->cambiarDatoPasajero($dni, $seleccion, $nuevoTelefono);
                 echo "El telefono se ha cambiado correctamente!"."\n";
                 separador();
                 break;
 
             case 4: 
                 separador();
-                echo $objPasajero;
+                echo $viaje->buscarPasajero($dni);
                 separador();
                 break;
 
@@ -297,9 +297,9 @@ function cambiarDatoPasajero($objPasajero)
 
 /**
  * Este modulo cambia los datos del responsable del vuelo
- * @param object $objResponsable
+ * @param object $viaje
  */
-function cambiarDatoResponsable($objResponsable)
+function cambiarDatoResponsable($viaje)
 {
     do{
         echo "Ingrese que dato desea cambiar: "."\n".
@@ -315,7 +315,7 @@ function cambiarDatoResponsable($objResponsable)
                 separador();
                 echo "Ingrese el nuevo nombre: "; 
                 $nuevoNombre = trim(fgets(STDIN));
-                $objResponsable->setNombre($nuevoNombre);
+                $viaje->cambiarDatoResponsable($seleccion, $nuevoNombre);
                 echo "El nombre se ha cambiado correctamente!"."\n";
                 separador();
                 break;
@@ -324,7 +324,7 @@ function cambiarDatoResponsable($objResponsable)
                 separador();
                 echo "Ingrese el nuevo apellido: "; 
                 $nuevoApellido = trim(fgets(STDIN));
-                $objResponsable->setApellido($nuevoApellido);
+                $viaje->cambiarDatoResponsable($seleccion, $nuevoApellido);
                 echo "El apellido se ha cambiado correctamente!"."\n";
                 separador();
                 break;
@@ -333,7 +333,7 @@ function cambiarDatoResponsable($objResponsable)
                 separador();
                 echo "Ingrese el nuevo numero de empleado: "; 
                 $nuevoNumEmpleado = trim(fgets(STDIN));
-                $objResponsable->setNumEmpleado($nuevoNumEmpleado);
+                $viaje->cambiarDatoResponsable($seleccion, $nuevoNumEmpleado);
                 echo "El numero de empleado se ha cambiado correctamente!"."\n";
                 separador();
                 break;
@@ -342,14 +342,14 @@ function cambiarDatoResponsable($objResponsable)
                 separador();
                 echo "Ingrese el nuevo numero de licencia: "; 
                 $nuevoNumLicencia = trim(fgets(STDIN));
-                $objResponsable->setNumLicencia($nuevoNumLicencia);
+                $viaje->cambiarDatoResponsable($seleccion, $nuevoNumLicencia);
                 echo "El numero de licencia se ha cambiado correctamente!"."\n";
                 separador();
                 break;
 
             case 5: 
                 separador();
-                echo $objResponsable;
+                echo $viaje->getResponsableV();
                 separador();
                 break;
 
@@ -424,8 +424,7 @@ switch ($opcion) {
         echo "Ingrese el DNI de que pasajero desea cambiar el dato: ";
         $dni = trim(fgets(STDIN));
         if($arrayViajes[$indexViaje]->existePasajero($dni)){
-            $objPasajero = $arrayViajes[$indexViaje]->buscarPasajero($dni);
-            cambiarDatoPasajero($objPasajero);
+            cambiarDatoPasajero($arrayViajes[$indexViaje], $dni);
             echo "Los datos se han cambiado correctamente!"."\n";
         }else{
             echo "El DNI del pasajero ingresado no existe!"."\n";
@@ -476,8 +475,7 @@ switch ($opcion) {
     // Modificar responsable viaje
     case 7: 
         separador();
-        $objResponsable = $arrayViajes[$indexViaje]->getResponsableV();
-        cambiarDatoResponsable($objResponsable);
+        cambiarDatoResponsable($arrayViajes[$indexViaje]);
         separador();
         $opcion = menu();
         break;
