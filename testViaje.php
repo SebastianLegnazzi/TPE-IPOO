@@ -34,24 +34,6 @@ function menu()
     echo "\n";
     return $menu;
 }
-
-
-/**
- * Inicia el programa y pide que ingrese los viajes que luego devuelve al programa principal
- * @return array
- */
-function inicioPrograma()
-{
-    separador();
-    echo "Bienvenido a la aplicacion de viajesulis :D"."\n";
-    echo "Ingrese la cantidad de viajes que desea ingresar: ";
-    $cantViajes = trim(fgets(STDIN));
-    $cantViajes = verificadorInt($cantViajes);
-    $arrayViajes = creaViajes($cantViajes);
-    return $arrayViajes;
-}
-
-
 /**
  * Este modulo crea un array con todos los viajes que el usuario desea ingresar
  * @param int $cant
@@ -398,7 +380,6 @@ switch ($opcion) {
         $nuevosViajes = creaViajes($cant);
         $arrayViajes = array_merge($arrayViajes, $nuevosViajes);
         separador();
-        $opcion = menu();
         break;
 
     // Saber la cantidad de pasajeros
@@ -406,7 +387,6 @@ switch ($opcion) {
         separador();
         echo "la cantidad de pasajeros del viaje ".$arrayViajes[$indexViaje]->getDestino()." es: ".$arrayViajes[$indexViaje]->cantidadPasajeros()."\n";
         separador();
-        $opcion = menu();
         break;
 
     // Ver los pasajeros y datos del viaje
@@ -415,7 +395,6 @@ switch ($opcion) {
         echo "Las personas y datos del viaje ".$arrayViajes[$indexViaje]->getDestino()." son: "."\n";
         echo $arrayViajes[$indexViaje];
         separador();
-        $opcion = menu();
         break;
         
     // Modificar los datos de un pasajero
@@ -430,7 +409,6 @@ switch ($opcion) {
             echo "El DNI del pasajero ingresado no existe!"."\n";
         }
         separador();
-        $opcion = menu();
         break;
         
     // Agregar un pasajeros al viaje
@@ -455,7 +433,6 @@ switch ($opcion) {
             echo "El vuelo ya esta lleno!"."\n";
         }
         separador();
-        $opcion = menu();
         break;
         
     // Eliminar un pasajero del viaje
@@ -469,7 +446,6 @@ switch ($opcion) {
             echo "El DNI no coincide con ningun pasajero del vuelo"."\n";
         }
         separador();
-        $opcion = menu();
         break;
         
     // Modificar responsable viaje
@@ -477,7 +453,6 @@ switch ($opcion) {
         separador();
         cambiarDatoResponsable($arrayViajes[$indexViaje]);
         separador();
-        $opcion = menu();
         break;
 
     // Ver datos de un pasajero
@@ -490,7 +465,6 @@ switch ($opcion) {
             echo $arrayViajes[$indexViaje]->verUnPasajero($dni);
         }
         separador();
-        $opcion = menu();
         break;
 
     // Cambiar destino del viaje
@@ -501,7 +475,6 @@ switch ($opcion) {
         $arrayViajes[$indexViaje]->setDestino($nuevoDestino);
         echo "El destino se ha cambiado correctamente!"."\n";
         separador();
-        $opcion = menu();
         break;
 
     // Cambiar capacidad maxima del viaje
@@ -516,7 +489,6 @@ switch ($opcion) {
         $arrayViajes[$indexViaje]->setCantidadMax($nuevaCapacidad);
         echo "La capacidad se ha cambiado correctamente!"."\n";
         separador();
-        $opcion = menu();
         break;
 
     // Cambiar codigo del viaje
@@ -527,13 +499,11 @@ switch ($opcion) {
         $arrayViajes[$indexViaje]->setCodigoViaje($nuevoCodigo);
         echo "El codigo se ha cambiado correctamente!"."\n";
         separador();
-        $opcion = menu();
         break;
 
     // Modificar otro viaje
     case 12: 
         $indexViaje = viajeModificar($arrayViajes);
-        $opcion = menu();
         break;
 
     // Elimina un viaje
@@ -550,7 +520,6 @@ switch ($opcion) {
             echo "el codigo ingresado no coicide con ningun viaje!"."\n";
         }
         separador();
-        $opcion = menu();
         break;
 
     // Ver todos los viajes
@@ -558,15 +527,13 @@ switch ($opcion) {
         separador();
         echo "Los viajes creados son: "."\n";
         mostrarViajes($arrayViajes);
-        $opcion = menu();
         break;
 
 
     default: 
         echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 14"."\n"."\n";
-        $opcion = menu();
         break;
     }
-} while ($opcion < 0 || $opcion > 0);
-exit();
+    $opcion = menu();
+} while ($opcion != 0);
 ?>

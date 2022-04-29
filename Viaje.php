@@ -5,8 +5,8 @@ class Viaje{
     private $cantidadMax;
     private $arrayPasajero;
     private $responsableV;
-
     
+
     /**************************************/
     /**************** SET *****************/
     /**************************************/
