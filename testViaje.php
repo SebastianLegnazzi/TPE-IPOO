@@ -422,6 +422,41 @@ function venderBoleto($objPasajero, $arrayViajes){
     }
 }
 
+function inicioPrograma($arrayViajes){
+    echo "ingrese que desea hacer: "."\n".
+    "1. Vender un viaje"."\n".
+    "2. Crear un nuevo Viaje"."\n".
+    "3. Modificar un viaje"."\n";
+    $seleccion = trim(fgets(STDIN));
+    $seleccion = verificadorInt($seleccion);
+    while($seleccion != 3){
+        switch($seleccion){
+            case 1: 
+            $objPasajero = personasViaje();
+            venderBoleto($objPasajero,$arrayViajes);
+            break;
+
+            case 2:
+                separador();
+                echo "Ingrese '1' si el viaje es Aereo / '2' si el viaje es Terrestre: ";
+                $tipoViaje = trim(fgets(STDIN));
+                $tipoViaje = verificadorInt($tipoViaje);
+                echo "Ingrese la cantidad de viajes que desea agregar: ";
+                $cant = trim(fgets(STDIN));
+                $cant = verificadorInt($cant);
+                $nuevosViajes = creaViajes($cant, $tipoViaje);
+                $arrayViajes = array_merge($arrayViajes, $nuevosViajes);
+                separador();
+            break;
+
+            default : 
+            echo "El número que ingresó no es válido, por favor ingrese un número del 1 al 3"."\n"."\n";
+            break;
+        }
+    $seleccion = trim(fgets(STDIN));
+    }
+}
+
 /**************************************/
 /******** VIAJES PRECARGADOS **********/
 /**************************************/
@@ -445,31 +480,7 @@ $arrayViajes[2] = new Terrestre(new ResponsableV("Chano","Tanbionica",121254,646
 /**************************************/
 
 //Este programa ejecuta segun la opcion elegida del usuario la secuencia de pasos a seguir
-echo "ingrese que desea hacer: "."\n".
-        "1. Vender un viaje"."\n".
-        "2. Crear un nuevo Viaje"."\n".
-        "3. Modificar un viaje"."\n";
-$seleccion = trim(fgets(STDIN));
-$seleccion = verificadorInt($seleccion);
-switch($seleccion){
-    case 1: 
-    $objPasajero = personasViaje();
-    venderBoleto($objPasajero,$arrayViajes);
-    break;
-
-    case 2:
-        separador();
-        echo "Ingrese '1' si el viaje es Aereo / '2' si el viaje es Terrestre: ";
-        $tipoViaje = trim(fgets(STDIN));
-        $tipoViaje = verificadorInt($tipoViaje);
-        echo "Ingrese la cantidad de viajes que desea agregar: ";
-        $cant = trim(fgets(STDIN));
-        $cant = verificadorInt($cant);
-        $nuevosViajes = creaViajes($cant, $tipoViaje);
-        $arrayViajes = array_merge($arrayViajes, $nuevosViajes);
-        separador();
-    break;
-}
+inicioPrograma($arrayViajes);
 $objViaje = viajeModificar($arrayViajes);
 $opcion = menu();
 do {
