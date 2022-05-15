@@ -5,6 +5,8 @@ class Viaje{
     private $cantidadMax;
     private $arrayPasajero;
     private $responsableV;
+    private $tipoAsiento;
+    private $importe;
     
 
     /**************************************/
@@ -52,6 +54,20 @@ class Viaje{
      */ 
     public function setResponsableV($responsableV){
         $this->responsableV = $responsableV;
+    }
+
+    /**
+     * Establece el valor de tipo
+     */ 
+    public function setTipoAsiento($tipoAsiento){
+        $this->tipo = $tipoAsiento;
+    }
+
+    /**
+     * Establece el valor de importe
+     */ 
+    public function setImporte($importe){
+        $this->importe = $importe;
     }
 
 
@@ -102,6 +118,21 @@ class Viaje{
         return $this->responsableV;
     }
 
+    /**
+     * Obtiene el valor de tipo
+     */ 
+    public function getTipoAsiento(){
+        return $this->tipoAsiento;
+    }
+
+    /**
+     * Obtiene el valor de importe
+     */ 
+    public function getImporte(){
+        return $this->importe;
+    }
+
+
 
     /**************************************/
     /************** FUNCIONES *************/
@@ -115,12 +146,14 @@ class Viaje{
      * @param int $codigoViaje
      * @param object $responsableV
     */
-    public function __construct($responsableV, $arrayPasajero,$cantidadMax,$destino,$codigoViaje){
+    public function __construct($responsableV, $arrayPasajero,$cantidadMax,$destino,$codigoViaje,$importe,$tipoAsiento){
         $this->responsableV = $responsableV;
         $this->arrayPasajero = $arrayPasajero;
         $this->cantidadMax = $cantidadMax;
         $this->destino = $destino;
         $this->codigoViaje = $codigoViaje;
+        $this->importe = $importe;
+        $this->tipoAsiento = $tipoAsiento;
     }
 
     /**
@@ -168,7 +201,7 @@ class Viaje{
      * Este modulo analiza si la capacidad de los pasajeros es menor a la capacidad maxima
      * @return boolean
     */
-    public function superaCapacidad(){
+    public function hayPasajesDisponible(){
         $capacidad = count($this->getArrayPasajero());
         $verificacion = ($capacidad < $this->getCantidadMax()) ? true : false;
         return $verificacion;
@@ -276,7 +309,25 @@ class Viaje{
         return ($pasajero);
     }
     
+    /**
+     * Este modulo devuelve el pasajero buscado
+     * @param int $documento
+     * @return object
+     */
+    public function verUnPasajero($documento){
+        $objPasajero = $this->buscarPasajero($documento);
+        return $objPasajero;
+    }
 
+    public function venderPasaje($objPasajero){
+        $importe = null;
+        if($this->hayPasajesDisponible()){
+            $this->agregarPasajero($objPasajero);
+            $importe = $this->getImporte();
+        }
+        return $importe;
+    }
+    
     /**
      * Este modulo devuelve una cadena de caracteres mostrando el contenido de los atributos
      * @return string
@@ -289,18 +340,7 @@ class Viaje{
                 "Los pasajeros del viaje son: "."\n".$this->pasajerosToString()."\n");
     }
 
-    
-    /**
-     * Este modulo devuelve el pasajero buscado
-     * @param int $documento
-     * @return object
-     */
-    public function verUnPasajero($documento){
-        $objPasajero = $this->buscarPasajero($documento);
-        return $objPasajero;
-    }
 
-    
     /**************************************/
     /********* FUNCIONES PRIVADAS *********/
     /**************************************/
@@ -311,7 +351,6 @@ class Viaje{
      */
     private function pasajerosToString(){
         $arrayPasajeros = $this->getArrayPasajero();
-        $i = 1;
         $separador = "================================";
         $toString = $separador."\n";
         foreach ($arrayPasajeros as $pasajero){
@@ -319,6 +358,9 @@ class Viaje{
         }
         return $toString;
     }
+
+
+
 }
 
 ?>
