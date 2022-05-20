@@ -61,8 +61,8 @@ class Aereo extends Viaje {
     /************** FUNCIONES *************/
     /**************************************/
     
-    public function __construct($responsableV,$arrayPasajero,$cantidadMax,$destino,$codigoViaje,$importe,$tipoAsiento,$nroVuelo,$nombreAereolinea,$escalas){
-        parent::__construct($responsableV,$arrayPasajero,$cantidadMax,$destino,$codigoViaje,$importe,$tipoAsiento);
+    public function __construct($responsableV,$arrayPasajero,$cantidadMax,$destino,$codigoViaje,$importe,$tipoAsiento,$nroVuelo,$nombreAereolinea,$escalas,$idaVuelta){
+        parent::__construct($responsableV,$arrayPasajero,$cantidadMax,$destino,$codigoViaje,$importe,$tipoAsiento,$idaVuelta);
         $this->nroVuelo = $nroVuelo;
         $this->nombreAereolinea = $nombreAereolinea;
         $this->escalas = $escalas;
@@ -71,7 +71,7 @@ class Aereo extends Viaje {
     public function venderPasaje($objPasajero){
         $importe = parent::venderPasaje($objPasajero);
         if($importe != null){
-            $tipoAsiento = parent::getTipoAsiento();
+            $tipoAsiento = $this->getTipoAsiento();
             if(($tipoAsiento == "1") && ($this->getEscalas() > 0)){                     /* 1 = primera clase  /  2 = clase estandar  */
                 $importe = $importe * 1.6;
             }else if(($tipoAsiento == "1") && ($this->getEscalas() == 0)){

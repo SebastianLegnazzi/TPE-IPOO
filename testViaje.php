@@ -26,9 +26,6 @@ function menu()
     echo "8) Cambiar destino del viaje."."\n";
     echo "9) Cambiar capacidad maxima del viaje."."\n";
     echo "10) Cambiar codigo del viaje."."\n";
-    echo "11) Modificar otro viaje."."\n";
-    echo "12) Elimina un viaje."."\n";
-    echo "13) Ver todos los viajes."."\n";
     echo "0) Volver"."\n";
     echo "Opcion: ";
     $menu = trim(fgets(STDIN));
@@ -47,7 +44,9 @@ function menuInicio()
     "0. Salir"."\n".
     "1. Vender un viaje"."\n".
     "2. Crear un nuevo Viaje"."\n".
-    "3. Modificar un viaje"."\n";
+    "3. Ver todos los viajes."."\n".
+    "4. Modificar un viaje"."\n".
+    "5. Elimina un viaje"."\n";
     echo "Opcion: ";
     $menu = trim(fgets(STDIN));
     echo "\n";
@@ -75,6 +74,9 @@ function creaViajes($cant, $tipoViaje)
         echo "Ingrese la cantidad de personas que realizaran el viaje ".($i+1)." : ";
         $cantPersonas = trim(fgets(STDIN));
         $cantPersonas = verificadorInt($cantPersonas);
+        echo "Ingrese si el viaje es de ida o vuelta ".($i+1)." : ";
+        $idaVuelta = strtolower(trim(fgets(STDIN)));
+        $idaVuelta = ($idaVuelta == "ida") ? false : true;
         echo "Ingrese el importe del viaje ".($i+1)." : ";
         $importe = trim(fgets(STDIN));
         $importe = verificadorInt($importe);
@@ -98,13 +100,13 @@ function creaViajes($cant, $tipoViaje)
             echo "Ingrese las escalas del vuelo ".($i)."\n";
             $escalas = trim(fgets(STDIN));
             $escalas = verificadorInt($escalas);
-            $arrayViajes[$i] = new Aereo($responsable,$arrayPasajeros,$cantMax,$destViaje,$codigoViaje,$importe,$tipoAsiento,$nroVuelo,$nombreAero,$escalas);
+            $arrayViajes[$i] = new Aereo($responsable,$arrayPasajeros,$cantMax,$destViaje,$codigoViaje,$importe,$tipoAsiento,$nroVuelo,$nombreAero,$escalas,$idaVuelta);
             echo "El viaje se ha creado correctamente!"."\n";
         }else{
             echo "Ingrese el tipo de asiento del viaje ".($i)." ('1' para asiento cama o semicama/ '0' para asiento ) : ";
             $tipoAsiento = trim(fgets(STDIN));
             $tipoAsiento = verificadorInt($tipoAsiento);
-            $arrayViajes[$i] = new Terrestre($responsable,$arrayPasajeros,$cantMax,$destViaje,$codigoViaje,$importe,$tipoAsiento);
+            $arrayViajes[$i] = new Terrestre($responsable,$arrayPasajeros,$cantMax,$destViaje,$codigoViaje,$importe,$tipoAsiento,$idaVuelta);
             echo "El viaje se ha creado correctamente!"."\n";
         }
     }
@@ -134,7 +136,12 @@ function viajeModificar($viajes)
     return $objViaje;
 }
 
-function tipoViaje($objViaje){
+/**
+ * Verifica que tipo de asiento es y devuelve una cadena de caracteres correspondiente
+ * @param object $objViaje
+ * @return string
+ */
+function tipoAsientoViaje($objViaje){
     if(($objViaje->getTipoAsiento() == 1) && (get_class($objViaje) == "Aereo")){
         $stringClase = "de primera clase";
     }else if(($objViaje->getTipoAsiento() == 1) && (get_class($objViaje) == "Terrestre")){
@@ -145,11 +152,31 @@ function tipoViaje($objViaje){
     return $stringClase;
 }
 
+/**
+ * Verifica que tipo de vuelo es y devuelve una cadena de caracteres correspondiente
+ * @param object $objViaje
+ * @return string
+ */
+function tipoVuelo($objViaje){
+    if($objViaje->getIdaVuelta() == true){
+        $stringTipo = "ida y vuelta";
+    }else{
+        $stringTipo = "ida";
+    }
+    return $stringTipo;
+}
+
+/**
+ * Devuelve una cadena de caracteres para ver los datos del viaje por pantalla
+ * @param array $arrayViajes
+ * @return string
+ */
 function stringObjViajes($arrayViajes){
     $stringViajes = "";
     foreach($arrayViajes as $objViaje){
-        $stringTipo = tipoViaje($objViaje);
-        $stringViajes.="- El codigo del viaje ".get_class($objViaje)." ".$stringTipo." con destino a ".$objViaje->getDestino()." es: ".$objViaje->getCodigoViaje()."\n";
+        $stringTipoAsiento = tipoAsientoViaje($objViaje);
+        $tipoVuelo = tipoVuelo($objViaje);
+        $stringViajes.="- El codigo del viaje ".get_class($objViaje)." ".$stringTipoAsiento." de tipo ".$tipoVuelo." con destino a ".$objViaje->getDestino()." es: ".$objViaje->getCodigoViaje()."\n";
     }
     return $stringViajes;
 }
@@ -174,7 +201,6 @@ function indexViaje($arrayViajes, $codigoViaje)
     }
     return $i;
 }
-
 
 /**
  * Devuelve en que posicion del $arrayViajes se encuentra el codigo ingresado
@@ -263,7 +289,6 @@ function separador()
 {
     echo "========================================================"."\n";
 }
-
 
 /**
  * Verifica que el valor ingreasado sea un entero, en caso contario lo vuelve a pedir hasta que sea un entero
@@ -403,40 +428,16 @@ function cambiarDatoResponsable($viaje)
 
 function venderBoleto($objPasajero, $arrayViajes){
     $stringObjViajes = stringObjViajes($arrayViajes);
-    echo "ingrese el viaje que desea comprar: "."\n".
-        "1. Ida"."\n".
-        "2. Ida y vuelta"."\n";
-    $tipoViaje = trim(fgets(STDIN));
-    $tipoViaje = verificadorInt($tipoViaje);
-    echo "ingrese el codigo del viaje de ida, Las opciones son: "."\n";
+    echo "ingrese el codigo del viaje de ida o ida y vuelta, Las opciones son: "."\n";
     echo $stringObjViajes;
     $codigoDest = trim(fgets(STDIN));
     $objViajeDestino = buscarViaje($arrayViajes, $codigoDest);
-    if($tipoViaje == 1){
-        $importe = $objViajeDestino->venderPasaje($objPasajero);
-        if($importe != null){
-            echo "Compra Realizada!"."\n".
-                "importe del viaje es: $".$importe."\n";
-        }else{
-            echo "El vuelo ".$objViajeDestino()." no existe o no hay lugar"."\n";
-        }
+    $importe = $objViajeDestino->venderPasaje($objPasajero);
+    if($importe != null){
+        echo "Compra Realizada!"."\n".
+            "importe del viaje es: $".$importe."\n";
     }else{
-        echo "ingrese el codigo del origen de su viaje: ";
-        $codigoOrigen = strtolower(trim(fgets(STDIN)));
-        $objViajeOrigen = buscarViaje($arrayViajes, $codigoOrigen);
-        $importeIda = $objViajeDestino->venderPasaje($objPasajero);
-        $importeVuelta = $objViajeOrigen->venderPasaje($objPasajero);
-        if($importeIda != null){
-            if($importeVuelta != null){
-                $importeTot = $importeIda + $importeVuelta;
-                echo "El precio total del viaje de ida (".$objViajeDestino->getCodigoViaje().") y vuelta (".
-                    $objViajeOrigen->getCodigoViaje().") es: $".$importeTot."\n";
-            }else{
-                echo "El vuelo ".$objViajeOrigen->getCodigoViaje()." no existe o no hay lugar"."\n";
-            }
-        }else{
-            echo "El vuelo ".$objViajeDestino()." no existe o no hay lugar"."\n";
-        }
+        echo "El vuelo ".$objViajeDestino()." no existe o no hay lugar"."\n";
     }
 }
 
@@ -460,7 +461,7 @@ function opcionesViaje($arrayViajes){
             echo $objViaje;
             separador();
             break;
-            
+
         // Modificar los datos de un pasajero
         case 3: 
             separador();
@@ -565,36 +566,8 @@ function opcionesViaje($arrayViajes){
             separador();
             break;
     
-        // Modificar otro viaje
-        case 11: 
-            $objViaje = viajeModificar($arrayViajes);
-            break;
-    
-        // Elimina un viaje
-        case 12: 
-            separador();
-            echo "Ingrese el codigo del viaje que desea eliminar: ";
-            $codigo = trim(fgets(STDIN));
-            $objViaje = buscarViaje($arrayViajes, $codigo);
-            if($objViaje != null){
-                $index = indexViaje($arrayViajes, $codigo);
-                unset($arrayViajes[$index]);
-                sort($arrayViajes);
-            }else{
-                echo "el codigo ingresado no coicide con ningun viaje!"."\n";
-            }
-            separador();
-            break;
-    
-        // Ver todos los viajes
-        case 13: 
-            separador();
-            echo "Los viajes creados son: "."\n";
-            mostrarViajes($arrayViajes);
-            break;
-    
         default: 
-            echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 13"."\n"."\n";
+            echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 10"."\n"."\n";
             break;
         }
         $opcion = menu();
@@ -609,24 +582,28 @@ function opcionesViaje($arrayViajes){
 $arrayPersonas = [new Pasajero("Paula","Lopez",4020310,29946879),
                 new Pasajero("Mariano","Martinez",4687955,29946879),
                 new Pasajero("Juan","Legnazzi",3801546,29945879)];
-$arrayViajes[0] = new Aereo(new ResponsableV("Pablo","Orejas",516464,787554),$arrayPersonas,20,"Neuquen",1,30000,1,101,"FlyBondi",3);
+$arrayViajes[0] = new Aereo(new ResponsableV("Pablo","Orejas",516464,787554),$arrayPersonas,20,"Neuquen",1,30000,1,101,"FlyBondi",3,false);
 //Viaje 2
 $arrayPersonas = [new Pasajero("Sebastian","Legnazzi",4397918,299646879),
                 new Pasajero("Alejandra","Alegre",2546548,299564787)];
-$arrayViajes[1] = new Aereo(new ResponsableV("Felipe","Ortega",516778,55554),$arrayPersonas,30,"Buenos Aires",2,20000,0,202,"AeroArg",0);
+$arrayViajes[1] = new Aereo(new ResponsableV("Felipe","Ortega",516778,55554),$arrayPersonas,30,"Buenos Aires",2,20000,0,202,"AeroArg",0,true);
 //Viaje 3
 $arrayPersonas = [new Pasajero("Martina","Laurel",3533646,299566477),
                 new Pasajero("Mauricio","Lamelin",4343458,29948997)];
-$arrayViajes[2] = new Terrestre(new ResponsableV("Chano","Tanbionica",121254,64684),$arrayPersonas,50,"Buenos Aires",3,20000,1);
+$arrayViajes[2] = new Terrestre(new ResponsableV("Chano","Tanbionica",121254,64684),$arrayPersonas,50,"Buenos Aires",3,20000,1,false);
 
 /**************************************/
 /********* PROGRAMA PRINCIPAL *********/
 /**************************************/
 
 //Este programa ejecuta segun la opcion elegida del usuario la secuencia de pasos a seguir
-$seleccion = menuInicio();
 do{   
+    $seleccion = menuInicio();
     switch($seleccion){
+        case 0:
+            exit();
+        break;
+        
         case 1: 
         $objPasajero = personasViaje();
         venderBoleto($objPasajero,$arrayViajes);
@@ -644,17 +621,39 @@ do{
             $arrayViajes = array_merge($arrayViajes, $nuevosViajes);
             separador();
         break;
-        
+
+        // Ver todos los viajes
         case 3:
             separador();
+            echo "Los viajes creados son: "."\n";
+            mostrarViajes($arrayViajes);
+        break;
+
+        // Modificar un viaje
+        case 4:
             opcionesViaje($arrayViajes);
+        break;
+        
+        // Elimina un viaje
+        case 5:
+            separador();
+            echo "Ingrese el codigo del viaje que desea eliminar: ";
+            $codigo = trim(fgets(STDIN));
+            $objViaje = buscarViaje($arrayViajes, $codigo);
+            if($objViaje != null){
+                $index = indexViaje($arrayViajes, $codigo);
+                unset($arrayViajes[$index]);
+                sort($arrayViajes);
+            }else{
+                echo "el codigo ingresado no coicide con ningun viaje!"."\n";
+            }
             separador();
         break;
 
         default : 
-        echo "El número que ingresó no es válido, por favor ingrese un número del 1 al 3"."\n"."\n";
+        echo "El número que ingresó no es válido, por favor ingrese un número del 0 al 5"."\n"."\n";
         break;
     }
-    $seleccion = menuInicio();
-}while($seleccion != 0);
+}while($seleccion != 0)
+
 ?>

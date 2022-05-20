@@ -6,8 +6,8 @@ class Viaje{
     private $arrayPasajero;
     private $responsableV;
     private $tipoAsiento;
-    private $importe;
-    
+    private $importe;    
+    private $idaVuelta;    
 
     /**************************************/
     /**************** SET *****************/
@@ -68,6 +68,13 @@ class Viaje{
      */ 
     public function setImporte($importe){
         $this->importe = $importe;
+    }
+
+    /**
+     * Establece el valor de idaVuelta
+     */ 
+    public function setIdaVuelta($idaVuelta){
+        $this->idaVuelta = $idaVuelta;
     }
 
 
@@ -132,7 +139,12 @@ class Viaje{
         return $this->importe;
     }
 
-
+    /**
+     * Obtiene el valor de idaVuelta
+     */ 
+    public function getIdaVuelta(){
+        return $this->idaVuelta;
+    }
 
     /**************************************/
     /************** FUNCIONES *************/
@@ -146,7 +158,7 @@ class Viaje{
      * @param int $codigoViaje
      * @param object $responsableV
     */
-    public function __construct($responsableV, $arrayPasajero,$cantidadMax,$destino,$codigoViaje,$importe,$tipoAsiento){
+    public function __construct($responsableV, $arrayPasajero,$cantidadMax,$destino,$codigoViaje,$importe,$tipoAsiento,$idaVuelta){
         $this->responsableV = $responsableV;
         $this->arrayPasajero = $arrayPasajero;
         $this->cantidadMax = $cantidadMax;
@@ -154,6 +166,7 @@ class Viaje{
         $this->codigoViaje = $codigoViaje;
         $this->importe = $importe;
         $this->tipoAsiento = $tipoAsiento;
+        $this->idaVuelta = $idaVuelta;
     }
 
     /**
@@ -251,7 +264,6 @@ class Viaje{
         }
     }
 
-
     /**
      * Este modulo devuelve la cantidad de pasajeros que hay en el viaje
      * @return int
@@ -260,7 +272,6 @@ class Viaje{
         $cantidad = count($this->getArrayPasajero());
         return $cantidad;
     }
-
 
     /**
      * Este modulo busca si existe el pasajero y devuelve true o false
@@ -283,7 +294,6 @@ class Viaje{
         }
         return ($existe);
     }
-
     
     /**
      * Este modulo busca si existe el pasajero y devuelve el objeto con el pasajero
@@ -323,7 +333,11 @@ class Viaje{
         $importe = null;
         if($this->hayPasajesDisponible()){
             $this->agregarPasajero($objPasajero);
-            $importe = $this->getImporte();
+            if($this->getIdaVuelta()){
+                $importe = ($this->getImporte() * 1.25);
+            }else{
+                $importe = $this->getImporte();
+            }
         }
         return $importe;
     }
@@ -358,6 +372,8 @@ class Viaje{
         }
         return $toString;
     }
+
+
 
 
 
