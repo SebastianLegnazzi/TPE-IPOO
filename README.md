@@ -5,6 +5,6 @@
 - **CUATRIMESTRE:** 2º
 - **CARRERA:** Tecnicatura Universitaria en Desarrollo Web
 - **MATERIA:** Introducción a la programación Orientada a Objetos
-- **NOTA:** :white_check_mark: Aprobado 
+- **NOTA:** :white_check_mark:Aprobado
 ## Contacto
 - **EMAIL:** sebileg@hotmail.com
